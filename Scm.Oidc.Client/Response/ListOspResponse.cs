@@ -2,7 +2,8 @@
 
 namespace Com.Scm.OAuth.Response
 {
-    public class ListOspResponse : OidcDataResponse<List<OspItem>>
+    public class ListOspResponse : OidcResponse
     {
+        public List<OspItem> Data { get; set; }
     }
 }
