@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Com.Scm.OAuth</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Scm.Common.Text">
+      <HintPath>..\..\..\FES\net\Libs\netstandard2.0\Scm.Common.Text.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

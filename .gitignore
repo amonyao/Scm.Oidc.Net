@@ -1,0 +1,22 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+# Vue项目文件
+dist/
+node_modules/
+webpack/
+
+# Visual Studio项目文件
+.vs/
+[Bb]in/
+[Oo]bj/
+[Ll]ogs/
+[Pp]ublish/
+PublishScripts/
+PublishProfiles/
+*.user
+
+# 自定义项目文件
+[Gg]enerator/
+[Gg]enerated/

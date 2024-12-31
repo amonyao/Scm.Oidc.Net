@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="oidc_card">
+    <div id="oidc" name="oidc"></div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://oidc.org.cn/app/oidc.css" />
+    <style type="text/css">
+        .oidc_card {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script type="text/javascript" src="https://oidc.org.cn/oauth/osp.js?key=08dd24bcbf6c7612" charset="utf-8"></script>
+    <script type="text/javascript" src="https://oidc.org.cn/app/oidc.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        $(function () {
+            // 使用默认参数
+            oidc.init("oidc", {});
+        });
+    </script>
+}
