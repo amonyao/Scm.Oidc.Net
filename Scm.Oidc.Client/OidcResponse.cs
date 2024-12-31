@@ -1,4 +1,4 @@
-﻿namespace Com.Scm
+﻿namespace Com.Scm.Oidc
 {
     public class OidcResponse
     {

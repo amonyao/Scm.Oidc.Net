@@ -1,6 +1,4 @@
-using Scm.OIdc.Client;
-
-namespace Scm.OAuth.Win
+namespace Com.Scm.Oidc.Win
 {
     public partial class Form1 : Form
     {

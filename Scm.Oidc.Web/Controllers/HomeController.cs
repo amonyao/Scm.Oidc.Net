@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Scm.Oidc.Web.Models;
-using Scm.OIdc.Client;
 using System.Diagnostics;
 
-namespace Scm.Oidc.Web.Controllers
+namespace Com.Scm.Oidc.Web.Controllers
 {
     public class HomeController : Controller
     {

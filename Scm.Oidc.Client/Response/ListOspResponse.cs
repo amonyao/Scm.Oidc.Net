@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Com.Scm.OAuth.Response
+namespace Com.Scm.Oidc.Response
 {
     public class ListOspResponse : OidcResponse
     {

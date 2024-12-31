@@ -1,4 +1,4 @@
-﻿namespace Com.Scm.OAuth.Response
+﻿namespace Com.Scm.Oidc.Response
 {
     public class AccessTokenResponse : OidcResponse
     {

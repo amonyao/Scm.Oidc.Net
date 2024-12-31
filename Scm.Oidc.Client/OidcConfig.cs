@@ -1,4 +1,4 @@
-﻿namespace Scm.OIdc.Client
+﻿namespace Com.Scm.Oidc
 {
     public class OidcConfig
     {

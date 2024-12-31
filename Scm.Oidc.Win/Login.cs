@@ -1,7 +1,6 @@
-﻿using Com.Scm.OAuth.Response;
-using Scm.OIdc.Client;
+﻿using Com.Scm.Oidc.Response;
 
-namespace Scm.OAuth.Win
+namespace Com.Scm.Oidc.Win
 {
     public partial class Login : Form
     {

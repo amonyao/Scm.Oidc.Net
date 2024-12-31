@@ -1,6 +1,4 @@
-﻿using Scm.OIdc.Client;
-
-namespace Scm.Oidc.Web
+﻿namespace Com.Scm.Oidc.Web
 {
     public class OidcUtils
     {

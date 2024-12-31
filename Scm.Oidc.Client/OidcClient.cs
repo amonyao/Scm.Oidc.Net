@@ -1,12 +1,11 @@
-﻿using Com.Scm;
-using Com.Scm.OAuth.Response;
+﻿using Com.Scm.Oidc.Response;
 using Com.Scm.Utils;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scm.OIdc.Client
+namespace Com.Scm.Oidc
 {
     public class OidcClient
     {
@@ -26,6 +25,7 @@ namespace Scm.OIdc.Client
             _Config = config;
         }
 
+        #region 公共方法
         /// <summary>
         /// 获取所有服务商
         /// </summary>
@@ -67,6 +67,55 @@ namespace Scm.OIdc.Client
         }
 
         /// <summary>
+        /// 登录地址
+        /// </summary>
+        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
+        /// <returns></returns>
+        public string GetLoginUrl(string state = null)
+        {
+            var url = $"{BASE_URL}/Web/Login?key=" + _Config.AppKey;
+            if (state != null)
+            {
+                url += "&state=" + state;
+            }
+            return url;
+        }
+        #endregion
+
+        #region OAuth登录
+        /// <summary>
+        /// 登录授权
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<OidcResponse> Authorize(string code)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 换取Token
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<OidcResponse> AccessToken(string code)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 刷新Token
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<OidcResponse> RefreshToken(string code)
+        {
+            return null;
+        }
+        #endregion
+
+        #region 授权码登录
+        /// <summary>
         /// 发送验证码
         /// </summary>
         /// <param name="type"></param>
@@ -101,21 +150,9 @@ namespace Scm.OIdc.Client
             var url = "User/SignIn";
             return null;
         }
+        #endregion
 
-        /// <summary>
-        /// 登录地址
-        /// </summary>
-        /// <returns></returns>
-        public string GetLoginUrl(string state = null)
-        {
-            var url = $"{BASE_URL}/Web/Login?key=" + _Config.AppKey;
-            if (state != null)
-            {
-                url += "&state=" + state;
-            }
-            return url;
-        }
-
+        #region 获取用户信息
         /// <summary>
         /// 获取用户信息
         /// </summary>
@@ -124,6 +161,19 @@ namespace Scm.OIdc.Client
         {
             return null;
         }
+        #endregion
+
+        #region 心跳
+        /// <summary>
+        /// 心跳
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<OidcResponse> HeartBeat(string code)
+        {
+            return null;
+        }
+        #endregion
 
         #region 网络请求
         public async Task<T> GetObjectAsync<T>(string url) where T : class, new()

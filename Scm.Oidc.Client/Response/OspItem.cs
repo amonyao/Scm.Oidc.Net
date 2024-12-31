@@ -1,6 +1,4 @@
-﻿using Scm.OIdc.Client;
-
-namespace Com.Scm.OAuth.Response
+﻿namespace Com.Scm.Oidc.Response
 {
     public class OspItem
     {

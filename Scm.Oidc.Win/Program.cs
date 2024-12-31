@@ -1,4 +1,4 @@
-namespace Scm.OAuth.Win
+namespace Com.Scm.Oidc.Win
 {
     internal static class Program
     {

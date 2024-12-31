@@ -1,4 +1,4 @@
-﻿namespace Scm.OAuth.Win.OAuth
+﻿namespace Com.Scm.Oidc.Win
 {
     partial class Phone
     {
