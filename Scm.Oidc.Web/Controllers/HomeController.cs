@@ -41,7 +41,7 @@ namespace Com.Scm.Oidc.Web.Controllers
 
         public async Task<IActionResult> Result(string code)
         {
-            var userInfo = await _OidcClient.GetUserInfo(code);
+            var userInfo = await _OidcClient.AccessToken(code);
 
             return View();
         }

@@ -88,9 +88,12 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> Authorize(string code)
+        public string Authorize(string code)
         {
-            return null;
+            var url = OAUTH_URL + "/oauth/authorize";
+            url += "?code=" + code;
+
+            return url;
         }
 
         /// <summary>
@@ -122,11 +125,11 @@ namespace Com.Scm.Oidc
         /// <param name="code"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> SendSms(string type, string code, string key)
+        public async Task<OidcResponse> SendSms(OidcSmsEnums type, string code, string key)
         {
             var url = "User/SendSms";
             url += "?type=" + type;
-            url += "?code=" + code;
+            url += "&code=" + code;
             url += "&key=" + GenNonce();
 
             var response = await GetObjectAsync<SendSmsResponse>(url);
@@ -148,6 +151,16 @@ namespace Com.Scm.Oidc
         public async Task<OidcResponse> SignIn(string code, string key, string sms)
         {
             var url = "User/SignIn";
+            url += "?code=" + code;
+            url += "&key=" + key;
+            url += "&sms=" + sms;
+
+            var response = await GetObjectAsync<SendSmsResponse>(url);
+            if (response == null || !response.IsSuccess())
+            {
+                return null;
+            }
+
             return null;
         }
         #endregion
@@ -157,9 +170,18 @@ namespace Com.Scm.Oidc
         /// 获取用户信息
         /// </summary>
         /// <returns></returns>
-        public async Task<OidcResponse> GetUserInfo(string code)
+        public async Task<UserInfo> GetUserInfo(string code)
         {
-            return null;
+            var url = "/OAuth/UserInfo";
+            url = GenUrl(url);
+
+            var response = await PostObjectAsync<UserInfoResponse>(url);
+            if (response == null || !response.IsSuccess())
+            {
+                return null;
+            }
+
+            return response.Data;
         }
         #endregion
 
@@ -171,7 +193,16 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<OidcResponse> HeartBeat(string code)
         {
-            return null;
+            var url = "/OAuth/UserInfo";
+            url = GenUrl(url);
+
+            var response = await PostObjectAsync<OidcResponse>(url);
+            if (response == null || !response.IsSuccess())
+            {
+                return null;
+            }
+
+            return response;
         }
         #endregion
 
@@ -201,6 +232,22 @@ namespace Com.Scm.Oidc
             }
 
             return await message.Content.ReadAsStringAsync();
+        }
+
+        public async Task<T> PostObjectAsync<T>(string url) where T : class, new()
+        {
+            var client = new HttpClient();
+            url = GenUrl(url);
+
+            var content = new StringContent("", Encoding.UTF8);
+            var message = await client.PostAsync(url, content);
+            if (!message.IsSuccessStatusCode)
+            {
+                return default(T);
+            }
+
+            var result = await message.Content.ReadAsStringAsync();
+            return result.AsJsonObject<T>();
         }
 
         public async Task<string> PostStringAsync(string url)

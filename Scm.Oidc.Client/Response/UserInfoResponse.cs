@@ -1,9 +1,13 @@
 ﻿namespace Com.Scm.Oidc.Response
 {
-    public class UserInfoResponse : OidcResponse
+    public class UserInfoResponse : OidcDataResponse<UserInfo>
     {
-        public string oidc_code { get; set; }
-        public string user_name { get; set; }
-        public string picture { get; set; }
+    }
+
+    public class UserInfo
+    {
+        public string code { get; set; }
+        public string name { get; set; }
+        public string avatar { get; set; }
     }
 }
