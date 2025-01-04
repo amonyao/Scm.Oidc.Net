@@ -6,18 +6,40 @@ using System.Threading.Tasks;
 
 namespace Com.Scm.Oidc
 {
+    /// <summary>
+    /// OIDC客户端
+    /// </summary>
     public class OidcClient
     {
 #if DEBUG
+        /// <summary>
+        /// 服务端路径
+        /// </summary>
         public const string BASE_URL = "http://localhost:7201";
 #else
+        /// <summary>
+        /// 服务端路径
+        /// </summary>
         public const string BASE_URL = "http://oidc.org.cn";
 #endif
+        /// <summary>
+        /// 数据路径
+        /// </summary>
         public const string DATA_URL = BASE_URL + "/data";
+        /// <summary>
+        /// 授权路径
+        /// </summary>
         public const string OAUTH_URL = BASE_URL + "/oauth";
 
+        /// <summary>
+        /// OIDC配置
+        /// </summary>
         private OidcConfig _Config;
 
+        /// <summary>
+        /// 构造器
+        /// </summary>
+        /// <param name="config"></param>
         public OidcClient(OidcConfig config)
         {
             if (config == null)
@@ -36,7 +58,8 @@ namespace Com.Scm.Oidc
         public async Task<List<OidcOspInfo>> ListAllOspAsync()
         {
             var nonce = GenNonce();
-            var url = "/OAuth/ListOsp/0";
+
+            var url = GenAuthUrl("/ListOsp/0");
             url += "?nonce=" + nonce;
             url += "&sign=" + GenSign(nonce);
 
@@ -56,7 +79,8 @@ namespace Com.Scm.Oidc
         public async Task<List<OidcOspInfo>> ListAppOspAsync()
         {
             var nonce = GenNonce();
-            var url = OAUTH_URL + "/ListOsp/" + _Config.AppKey;
+
+            var url = GenAuthUrl("/ListOsp/" + _Config.AppKey);
             url += "?nonce=" + nonce;
             url += "&sign=" + GenSign(nonce);
 
@@ -76,7 +100,8 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public string GetLoginUrl(string state = null)
         {
-            var url = $"{BASE_URL}/Web/Login?key=" + _Config.AppKey;
+            var url = GenBaseUrl("/Web/Login");
+            url += "?key=" + _Config.AppKey;
             if (state != null)
             {
                 url += "&state=" + state;
@@ -89,24 +114,27 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 登录授权
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
-        public string Authorize(string code)
+        public string Authorize(string state = null)
         {
-            var url = OAUTH_URL + "/Authorize";
-            url += "?code=" + code;
+            var url = GenAuthUrl("/Authorize");
+            url += "?response_type=code";
+            url += "&redirect_uri=" + _Config.RedirectUrl;
+            url += "&state=" + state;
+            //url += "&scope=";
 
             return url;
         }
 
         /// <summary>
-        /// 换取Token
+        /// 换取令牌
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="code">服务端回调时传递的参数</param>
         /// <returns></returns>
         public async Task<AccessTokenResponse> AccessTokenAsync(string code)
         {
-            var url = OAUTH_URL + "/Token";
+            var url = GenAuthUrl("/Token");
 
             var body = new Dictionary<string, string>()
             {
@@ -121,31 +149,43 @@ namespace Com.Scm.Oidc
         }
 
         /// <summary>
-        /// 刷新Token
+        /// 刷新令牌
         /// </summary>
-        /// <param name="token">刷新令牌</param>
+        /// <param name="accessToken">访问令牌</param>
+        /// <param name="refreshToken">刷新令牌</param>
         /// <returns></returns>
-        public async Task<OidcResponse> RefreshTokenAsync(string token)
+        public async Task<RefreshTokenResponse> RefreshTokenAsync(string accessToken, string refreshToken)
         {
-            var url = OAUTH_URL + "/Token";
+            var url = GenAuthUrl("/Token");
+
+            var header = new Dictionary<string, string>()
+            {
+                ["Authorization"] = accessToken,
+            };
 
             var body = new Dictionary<string, string>()
             {
                 ["grant_type"] = "refresh_token",
-                ["refresh_token"] = token,
+                ["refresh_token"] = refreshToken,
                 ["client_id"] = _Config.AppKey,
                 ["client_secret"] = _Config.AppSecret,
                 ["redirect_uri"] = _Config.RedirectUrl
             };
 
-            return await HttpUtils.PostFormObjectAsync<AccessTokenResponse>(url, body, null);
+            return await HttpUtils.PostFormObjectAsync<RefreshTokenResponse>(url, body, header);
         }
         #endregion
 
         #region 代码调用登录
+        /// <summary>
+        /// 直接登录
+        /// </summary>
+        /// <param name="ospCode">服务商代码</param>
+        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
+        /// <returns></returns>
         public async Task<LoginResponse> LoginAsync(string ospCode, string state = null)
         {
-            var url = OAUTH_URL + "/Login";
+            var url = GenAuthUrl("/Login");
             url += "/" + ospCode;
 
             var body = new Dictionary<string, string>()
@@ -162,16 +202,16 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 发送验证码
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="code"></param>
-        /// <param name="key"></param>
+        /// <param name="type">验证码类型</param>
+        /// <param name="code">验证码接收地址（邮件或手机）</param>
+        /// <param name="key">自定义识别码，用于后续校验时使用</param>
         /// <returns></returns>
-        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string key)
+        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string key = null)
         {
-            var url = OAUTH_URL + "/SendSms";
+            var url = GenAuthUrl("/SendSms");
             url += "?type=" + type;
             url += "&code=" + code;
-            url += "&key=" + GenNonce();
+            url += "&key=" + key;
 
             return await HttpUtils.GetObjectAsync<SendSmsResponse>(url);
         }
@@ -179,9 +219,9 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 登录
         /// </summary>
-        /// <param name="code"></param>
-        /// <param name="key"></param>
-        /// <param name="sms"></param>
+        /// <param name="code">验证码接收地址（邮件或手机）</param>
+        /// <param name="key">自定义识别码，与发送验证时的Key一致</param>
+        /// <param name="sms">验证码</param>
         /// <returns></returns>
         public async Task<VerifySmsResponse> VerifySmsAsync(string code, string key, string sms)
         {
@@ -198,12 +238,14 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 获取用户信息
         /// </summary>
+        /// <param name="accessToken">访问令牌</param>
         /// <returns></returns>
-        public async Task<UserInfoResponse> GetUserInfoAsync(string code)
+        public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
         {
-            var url = OAUTH_URL + "/UserInfo";
+            var url = GenAuthUrl("/UserInfo");
+            url += "?token=" + accessToken;
 
-            return await HttpUtils.PostFormObjectAsync<UserInfoResponse>(url);
+            return await HttpUtils.GetObjectAsync<UserInfoResponse>(url);
         }
         #endregion
 
@@ -211,27 +253,40 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 心跳
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="accessToken">访问令牌</param>
+        /// <param name="type">心跳类型</param>
+        /// <param name="data">心跳数据</param>
         /// <returns></returns>
-        public async Task<OidcResponse> HeartBeatAsync(string code)
+        public async Task<HeartBeatResponse> HeartBeatAsync(string accessToken, int type, string data = null)
         {
-            var url = "/OAuth/UserInfo";
-            url = GenUrl(url);
+            var url = GenAuthUrl("/HeartBeat");
 
-            var response = await HttpUtils.PostFormObjectAsync<OidcResponse>(url);
-            if (response == null || !response.IsSuccess())
+            var body = new Dictionary<string, string>()
             {
-                return null;
-            }
+                ["token"] = accessToken,
+                ["device"] = "",
+                ["type"] = type.ToString(),
+                ["data"] = data
+            };
 
-            return response;
+            return await HttpUtils.PostFormObjectAsync<HeartBeatResponse>(url, body);
         }
         #endregion
 
         #region 私有方法
-        public string GenUrl(string url)
+        public string GenBaseUrl(string url)
         {
             return BASE_URL + url;
+        }
+
+        public string GenAuthUrl(string url)
+        {
+            return OAUTH_URL + url;
+        }
+
+        public string GenDataUrl(string url)
+        {
+            return DATA_URL + url;
         }
 
         private string GenNonce()
