@@ -23,7 +23,7 @@ namespace Com.Scm.Oidc.Win
                 _Client = new OidcClient(config);
             }
 
-            var list = await _Client.ListAppOsp();
+            var list = await _Client.ListAppOspAsync();
             if (list == null)
             {
                 return;

@@ -6,38 +6,39 @@
 <div class="card oidc_card">
     <div class="card-body">
         <div class="row">
-            <div class="col">
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-envelope"></i></span>
-                    <input type="email" class="form-control" placeholder="someone@host.com">
-                </div>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Recipient's username">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">发送</button>
-                </div>
+            <div class="col text-center">
+                <h3>用户登录</h3>
             </div>
         </div>
-        <div class="row">
-            <div class="col"></div>
-        </div>
+        <form id="form1" class="mb-3 mt-3">
+            <input type="hidden" id="key" />
+            <input type="hidden" id="type" value="2" />
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="bi bi-envelope"></i></span>
+                <input id="email" name="email" type="email" class="form-control" placeholder="someone@host.com">
+            </div>
+            <div class="input-group mb-3">
+                <input id="sms" name="sms" type="text" class="form-control" placeholder="验证码">
+                <button id="send" name="send" class="btn btn-outline-secondary" type="button">发送</button>
+            </div>
+            <div id="notice" style="color:red">请注意信息安全</div>
+            <div class="d-grid gap-2">
+                <button id="check" name="check" class="btn btn-primary" type="button">登录</button>
+            </div>
+        </form>
         <div class="row">
             <div class="col">
                 <div class="list-group">
                     @{
-                        var client = ViewBag.Client as OidcClient;
-                        if (client != null)
+                        var ospList = ViewBag.OspList;
+                        if (ospList != null)
                         {
-                            var ospList = await client.ListAppOsp();
-                            if (ospList == null)
+                            foreach (var item in ospList)
                             {
-
-                            }
-                            else
-                            {
-                                foreach (var item in ospList)
+                                if (item.IsOAuth())
                                 {
                                     <a href="@item.GetAuthUrl()" class="list-group-item list-group-item-action">
-                                        <img src="@item.GetIconUrl()" alt="@item.Name" class="demo_icon" />
+                                        <img src="@item.GetIconUrl()" alt="@item.Name" class="oidc_icon" />
                                         @item.Name
                                     </a>
                                 }
@@ -50,16 +51,6 @@
     </div>
 </div>
 
-@section Styles {
-    <style type="text/css">
-        .oidc_card {
-            max-width: 480px;
-            margin: 0 auto;
-        }
-
-        .demo_icon {
-            width: 24px;
-            height: 24px;
-        }
-    </style>
+@section Scripts {
+    <script type="text/javascript" src="~/js/oidc.js"></script>
 }

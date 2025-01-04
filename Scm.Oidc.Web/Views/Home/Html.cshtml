@@ -2,15 +2,10 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="d-grid oidc_card">
-    <a class="btn btn-primary" href="@ViewBag.LoginUrl" role="button">登录</a>
+<div class="card oidc_card">
+    <div class="card-body">
+        <div class="d-grid" style="margin:40px 0px;">
+            <a class="btn btn-primary" href="@ViewBag.LoginUrl" role="button">登录</a>
+        </div>
+    </div>
 </div>
-
-@section Styles {
-    <style type="text/css">
-        .oidc_card {
-            max-width: 480px;
-            margin: 0 auto;
-        }
-    </style>
-}

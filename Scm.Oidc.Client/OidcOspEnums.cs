@@ -23,6 +23,10 @@
         /// </summary>
         OAuth = 4,
         /// <summary>
+        /// 更多
+        /// </summary>
+        More = 8,
+        /// <summary>
         /// 其它
         /// </summary>
         Other = 9

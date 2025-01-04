@@ -3,10 +3,27 @@
 }
 
 <div class="text-center">
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class="card">
+        <div class="card-header">
+            恭喜，授权成功！
+        </div>
+        <div class="card-body">
+            @{
+                var user = ViewBag.User;
+                if (user != null)
+                {
+                    <img class="img-thumbnail mt-4" style="border-radius: 100%" width="120" height="120" src="@user.GetAvatarUrl()" alt="用户头像" />
+                    <h4 class="mt-4">您好：@user.Name</h4>
+                }
+            }
+        </div>
+    </div>
 </div>
-<div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action">HTML示例</a>
-    <a href="#" class="list-group-item list-group-item-action">Javascript示例</a>
-    <a href="#" class="list-group-item list-group-item-action">自定义示例</a>
-</div>
+@section Styles {
+    <style>
+        .card {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+    </style>
+}

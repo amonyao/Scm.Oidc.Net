@@ -1,15 +1,18 @@
 ﻿using Com.Scm.Oidc.Response;
+using Com.Scm.Response;
 using Com.Scm.Utils;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Com.Scm.Oidc
 {
     public class OidcClient
     {
+#if DEBUG
+        public const string BASE_URL = "http://localhost:7201";
+#else
         public const string BASE_URL = "http://oidc.org.cn";
+#endif
         public const string DATA_URL = BASE_URL + "/data";
         public const string OAUTH_URL = BASE_URL + "/oauth";
 
@@ -30,14 +33,14 @@ namespace Com.Scm.Oidc
         /// 获取所有服务商
         /// </summary>
         /// <returns></returns>
-        public async Task<List<OspItem>> ListAllOsp()
+        public async Task<List<OspItem>> ListAllOspAsync()
         {
             var nonce = GenNonce();
             var url = "/OAuth/ListOsp/0";
             url += "?nonce=" + nonce;
             url += "&sign=" + GenSign(nonce);
 
-            var response = await GetObjectAsync<ListOspResponse>(url);
+            var response = await HttpUtils.GetObjectAsync<ListOspResponse>(url);
             if (response == null || !response.IsSuccess())
             {
                 return null;
@@ -50,14 +53,14 @@ namespace Com.Scm.Oidc
         /// 获取应用服务商
         /// </summary>
         /// <returns></returns>
-        public async Task<List<OspItem>> ListAppOsp()
+        public async Task<List<OspItem>> ListAppOspAsync()
         {
             var nonce = GenNonce();
-            var url = "/OAuth/ListOsp/" + _Config.AppKey;
+            var url = OAUTH_URL + "/ListOsp/" + _Config.AppKey;
             url += "?nonce=" + nonce;
             url += "&sign=" + GenSign(nonce);
 
-            var response = await GetObjectAsync<ListOspResponse>(url);
+            var response = await HttpUtils.GetObjectAsync<ListOspResponse>(url);
             if (response == null || !response.IsSuccess())
             {
                 return null;
@@ -90,7 +93,7 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public string Authorize(string code)
         {
-            var url = OAUTH_URL + "/oauth/authorize";
+            var url = OAUTH_URL + "/Authorize";
             url += "?code=" + code;
 
             return url;
@@ -101,9 +104,20 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> AccessToken(string code)
+        public async Task<AccessTokenResponse> AccessTokenAsync(string code)
         {
-            return null;
+            var url = OAUTH_URL + "/Token";
+
+            var body = new Dictionary<string, string>()
+            {
+                ["grant_type"] = "authorization_code",
+                ["code"] = code,
+                ["client_id"] = _Config.AppKey,
+                ["client_secret"] = _Config.AppSecret,
+                ["redirect_uri"] = _Config.RedirectUrl
+            };
+
+            return await HttpUtils.PostFormObjectAsync<AccessTokenResponse>(url, body, null);
         }
 
         /// <summary>
@@ -111,7 +125,7 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> RefreshToken(string code)
+        public async Task<OidcResponse> RefreshTokenAsync(string code)
         {
             return null;
         }
@@ -125,20 +139,14 @@ namespace Com.Scm.Oidc
         /// <param name="code"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> SendSms(OidcSmsEnums type, string code, string key)
+        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string key)
         {
-            var url = "User/SendSms";
+            var url = OAUTH_URL + "/SendSms";
             url += "?type=" + type;
             url += "&code=" + code;
             url += "&key=" + GenNonce();
 
-            var response = await GetObjectAsync<SendSmsResponse>(url);
-            if (response == null || !response.IsSuccess())
-            {
-                return null;
-            }
-
-            return null;
+            return await HttpUtils.GetObjectAsync<SendSmsResponse>(url);
         }
 
         /// <summary>
@@ -148,20 +156,14 @@ namespace Com.Scm.Oidc
         /// <param name="key"></param>
         /// <param name="sms"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> SignIn(string code, string key, string sms)
+        public async Task<VerifySmsResponse> VerifySmsAsync(string code, string key, string sms)
         {
             var url = "User/SignIn";
             url += "?code=" + code;
             url += "&key=" + key;
             url += "&sms=" + sms;
 
-            var response = await GetObjectAsync<SendSmsResponse>(url);
-            if (response == null || !response.IsSuccess())
-            {
-                return null;
-            }
-
-            return null;
+            return await HttpUtils.GetObjectAsync<VerifySmsResponse>(url);
         }
         #endregion
 
@@ -170,12 +172,12 @@ namespace Com.Scm.Oidc
         /// 获取用户信息
         /// </summary>
         /// <returns></returns>
-        public async Task<UserInfo> GetUserInfo(string code)
+        public async Task<OidcUserInfo> GetUserInfoAsync(string code)
         {
             var url = "/OAuth/UserInfo";
             url = GenUrl(url);
 
-            var response = await PostObjectAsync<UserInfoResponse>(url);
+            var response = await HttpUtils.PostFormObjectAsync<UserInfoResponse>(url);
             if (response == null || !response.IsSuccess())
             {
                 return null;
@@ -191,12 +193,12 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<OidcResponse> HeartBeat(string code)
+        public async Task<OidcResponse> HeartBeatAsync(string code)
         {
             var url = "/OAuth/UserInfo";
             url = GenUrl(url);
 
-            var response = await PostObjectAsync<OidcResponse>(url);
+            var response = await HttpUtils.PostFormObjectAsync<OidcResponse>(url);
             if (response == null || !response.IsSuccess())
             {
                 return null;
@@ -206,68 +208,8 @@ namespace Com.Scm.Oidc
         }
         #endregion
 
-        #region 网络请求
-        public async Task<T> GetObjectAsync<T>(string url) where T : class, new()
-        {
-            var client = new HttpClient();
-            url = GenUrl(url);
-            var message = await client.GetAsync(url);
-            if (!message.IsSuccessStatusCode)
-            {
-                return default(T);
-            }
-
-            var result = await message.Content.ReadAsStringAsync();
-            return result.AsJsonObject<T>();
-        }
-
-        public async Task<string> GetStringAsync(string url)
-        {
-            var client = new HttpClient();
-            url = GenUrl(url);
-            var message = await client.GetAsync(url);
-            if (!message.IsSuccessStatusCode)
-            {
-                return "";
-            }
-
-            return await message.Content.ReadAsStringAsync();
-        }
-
-        public async Task<T> PostObjectAsync<T>(string url) where T : class, new()
-        {
-            var client = new HttpClient();
-            url = GenUrl(url);
-
-            var content = new StringContent("", Encoding.UTF8);
-            var message = await client.PostAsync(url, content);
-            if (!message.IsSuccessStatusCode)
-            {
-                return default(T);
-            }
-
-            var result = await message.Content.ReadAsStringAsync();
-            return result.AsJsonObject<T>();
-        }
-
-        public async Task<string> PostStringAsync(string url)
-        {
-            var client = new HttpClient();
-            url = GenUrl(url);
-
-            var content = new StringContent("", Encoding.UTF8);
-            var message = await client.PostAsync(url, content);
-            if (!message.IsSuccessStatusCode)
-            {
-                return "";
-            }
-
-            return await message.Content.ReadAsStringAsync();
-        }
-        #endregion
-
         #region 私有方法
-        private string GenUrl(string url)
+        public string GenUrl(string url)
         {
             return BASE_URL + url;
         }
