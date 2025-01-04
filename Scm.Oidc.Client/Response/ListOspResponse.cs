@@ -2,8 +2,10 @@
 
 namespace Com.Scm.Oidc.Response
 {
-    public class ListOspResponse : OidcResponse
+    /// <summary>
+    /// 获取服务商响应
+    /// </summary>
+    public class ListOspResponse : OidcDataResponse<List<OidcOspInfo>>
     {
-        public List<OspItem> Data { get; set; }
     }
 }

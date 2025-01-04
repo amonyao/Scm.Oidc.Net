@@ -1,5 +1,8 @@
 ﻿namespace Com.Scm.Oidc
 {
+    /// <summary>
+    /// 系统配置
+    /// </summary>
     public class OidcConfig
     {
         /// <summary>
@@ -15,7 +18,7 @@
         /// </summary>
         public string RedirectUrl { get; set; }
         /// <summary>
-        /// 应用模式
+        /// 应用模式，暂未使用
         /// </summary>
         public int Mode { get; set; }
 

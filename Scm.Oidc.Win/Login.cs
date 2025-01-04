@@ -49,7 +49,7 @@ namespace Com.Scm.Oidc.Win
                 return;
             }
 
-            var item = button.Tag as OspItem;
+            var item = button.Tag as OidcOspInfo;
             if (item == null)
             {
                 return;

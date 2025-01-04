@@ -1,4 +1,5 @@
 using Com.Scm.Oidc.Response;
+using Com.Scm.Response;
 using Microsoft.AspNetCore.Mvc;
 using Scm.Oidc.Web.Models;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ namespace Com.Scm.Oidc.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+
         private OidcClient _OidcClient;
 
         public HomeController(ILogger<HomeController> logger, OidcClient client)
@@ -17,7 +19,7 @@ namespace Com.Scm.Oidc.Web.Controllers
         }
 
         /// <summary>
-        /// 首页
+        /// 首页视图
         /// </summary>
         /// <returns></returns>
         public IActionResult Index()
@@ -25,17 +27,9 @@ namespace Com.Scm.Oidc.Web.Controllers
             return View();
         }
 
+        #region Html示例
         /// <summary>
-        /// Javascript示例
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult Js()
-        {
-            return View();
-        }
-
-        /// <summary>
-        /// HTML示例
+        /// HTML示例视图
         /// </summary>
         /// <returns></returns>
         public IActionResult Html()
@@ -44,9 +38,22 @@ namespace Com.Scm.Oidc.Web.Controllers
 
             return View();
         }
+        #endregion
 
+        #region Javascript示例
         /// <summary>
-        /// 定制化示例
+        /// Javascript示例视图
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Js()
+        {
+            return View();
+        }
+        #endregion
+
+        #region 定制化示例
+        /// <summary>
+        /// 定制化示例视图
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> Custom()
@@ -56,20 +63,50 @@ namespace Com.Scm.Oidc.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 发送验证码
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="code"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         [HttpGet("home/sendSms")]
         public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string key)
         {
             return await _OidcClient.SendSmsAsync(type, code, key);
         }
 
-        [HttpGet("home/checkSms")]
-        public async Task<SendSmsResponse> CheckSmsAsync(string code, string key, string sms)
+        /// <summary>
+        /// 校验验证码
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="key"></param>
+        /// <param name="sms"></param>
+        /// <returns></returns>
+        [HttpGet("home/verifySms")]
+        public async Task<VerifySmsResponse> VerifySmsAsync(string code, string key, string sms)
         {
             return await _OidcClient.VerifySmsAsync(code, key, sms);
         }
+        #endregion
 
+        #region OAuth登录
         /// <summary>
-        /// 授权回调
+        /// 
+        /// </summary>
+        /// <param name="ospCode">服务商代码</param>
+        /// <param name="state">附加参数，可选</param>
+        /// <returns></returns>
+        [HttpGet("home/login")]
+        public async Task<LoginResponse> LoginAsync(string ospCode, string state = null)
+        {
+            return await _OidcClient.LoginAsync(ospCode, state);
+        }
+        #endregion
+
+        #region 授权回调
+        /// <summary>
+        /// 授权回调视图
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -84,7 +121,9 @@ namespace Com.Scm.Oidc.Web.Controllers
             ViewBag.User = response.User;
             return View();
         }
+        #endregion
 
+        #region 错误相关
         /// <summary>
         /// 错误页面
         /// </summary>
@@ -105,5 +144,6 @@ namespace Com.Scm.Oidc.Web.Controllers
         {
             return RedirectToAction("Error", "Home", new { error });
         }
+        #endregion
     }
 }

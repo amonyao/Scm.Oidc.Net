@@ -1,5 +1,8 @@
 ﻿namespace Com.Scm.Oidc
 {
+    /// <summary>
+    /// 服务商类型枚举
+    /// </summary>
     public enum OidcOspEnums
     {
         /// <summary>

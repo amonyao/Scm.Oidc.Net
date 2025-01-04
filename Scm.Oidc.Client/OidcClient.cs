@@ -33,7 +33,7 @@ namespace Com.Scm.Oidc
         /// 获取所有服务商
         /// </summary>
         /// <returns></returns>
-        public async Task<List<OspItem>> ListAllOspAsync()
+        public async Task<List<OidcOspInfo>> ListAllOspAsync()
         {
             var nonce = GenNonce();
             var url = "/OAuth/ListOsp/0";
@@ -53,7 +53,7 @@ namespace Com.Scm.Oidc
         /// 获取应用服务商
         /// </summary>
         /// <returns></returns>
-        public async Task<List<OspItem>> ListAppOspAsync()
+        public async Task<List<OidcOspInfo>> ListAppOspAsync()
         {
             var nonce = GenNonce();
             var url = OAUTH_URL + "/ListOsp/" + _Config.AppKey;
@@ -123,11 +123,38 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 刷新Token
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="token">刷新令牌</param>
         /// <returns></returns>
-        public async Task<OidcResponse> RefreshTokenAsync(string code)
+        public async Task<OidcResponse> RefreshTokenAsync(string token)
         {
-            return null;
+            var url = OAUTH_URL + "/Token";
+
+            var body = new Dictionary<string, string>()
+            {
+                ["grant_type"] = "refresh_token",
+                ["refresh_token"] = token,
+                ["client_id"] = _Config.AppKey,
+                ["client_secret"] = _Config.AppSecret,
+                ["redirect_uri"] = _Config.RedirectUrl
+            };
+
+            return await HttpUtils.PostFormObjectAsync<AccessTokenResponse>(url, body, null);
+        }
+        #endregion
+
+        #region 代码调用登录
+        public async Task<LoginResponse> LoginAsync(string ospCode, string state = null)
+        {
+            var url = OAUTH_URL + "/Login";
+            url += "/" + ospCode;
+
+            var body = new Dictionary<string, string>()
+            {
+                ["key"] = _Config.AppKey,
+                ["state"] = state
+            };
+
+            return await HttpUtils.GetObjectAsync<LoginResponse>(url, body, null);
         }
         #endregion
 
@@ -172,18 +199,11 @@ namespace Com.Scm.Oidc
         /// 获取用户信息
         /// </summary>
         /// <returns></returns>
-        public async Task<OidcUserInfo> GetUserInfoAsync(string code)
+        public async Task<UserInfoResponse> GetUserInfoAsync(string code)
         {
-            var url = "/OAuth/UserInfo";
-            url = GenUrl(url);
+            var url = OAUTH_URL + "/UserInfo";
 
-            var response = await HttpUtils.PostFormObjectAsync<UserInfoResponse>(url);
-            if (response == null || !response.IsSuccess())
-            {
-                return null;
-            }
-
-            return response.Data;
+            return await HttpUtils.PostFormObjectAsync<UserInfoResponse>(url);
         }
         #endregion
 

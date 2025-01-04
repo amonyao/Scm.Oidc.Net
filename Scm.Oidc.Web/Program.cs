@@ -6,6 +6,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // ≈‰÷√OIDC”¶”√
         OidcUtils.Setup(builder);
 
         // Add services to the container.

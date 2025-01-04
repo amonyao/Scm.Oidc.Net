@@ -1,18 +1,41 @@
 ﻿namespace Com.Scm.Oidc.Response
 {
-    public class OspItem
+    /// <summary>
+    /// 服务商信息
+    /// </summary>
+    public class OidcOspInfo
     {
+        /// <summary>
+        /// 服务商类型
+        /// </summary>
         public OidcOspEnums Type { get; set; }
 
+        /// <summary>
+        /// 服务商代码
+        /// </summary>
         public string Code { get; set; }
+        /// <summary>
+        /// 服务商名称
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 服务商图标
+        /// </summary>
         public string Icon { get; set; }
 
+        /// <summary>
+        /// 获取授权绝对路径
+        /// </summary>
+        /// <returns></returns>
         public string GetAuthUrl()
         {
             return $"{OidcClient.OAUTH_URL}/{Code}";
         }
 
+        /// <summary>
+        /// 获取图标绝对路径
+        /// </summary>
+        /// <returns></returns>
         public string GetIconUrl()
         {
             return $"{OidcClient.DATA_URL}/logo/{Icon}";
@@ -52,6 +75,15 @@
         public bool IsMore()
         {
             return Type == OidcOspEnums.More;
+        }
+
+        /// <summary>
+        /// 是否其它
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOther()
+        {
+            return Type == OidcOspEnums.Other;
         }
     }
 }
