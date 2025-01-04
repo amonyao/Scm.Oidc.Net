@@ -223,14 +223,15 @@ namespace Com.Scm.Oidc
         /// <param name="key">自定义识别码，与发送验证时的Key一致</param>
         /// <param name="sms">验证码</param>
         /// <returns></returns>
-        public async Task<VerifySmsResponse> VerifySmsAsync(string code, string key, string sms)
+        public async Task<VerifySmsResponse> VerifySmsAsync(OidcSmsEnums type, string code, string key, string sms)
         {
-            var url = "User/SignIn";
-            url += "?code=" + code;
+            var url = GenAuthUrl("/VerifySms");
+            url += "?type=" + (int)type;
+            url += "&code=" + code;
             url += "&key=" + key;
             url += "&sms=" + sms;
 
-            return await HttpUtils.GetObjectAsync<VerifySmsResponse>(url);
+            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url);
         }
         #endregion
 

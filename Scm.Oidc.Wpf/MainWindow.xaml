@@ -1,12 +1,24 @@
 ﻿<Window x:Class="Com.Scm.Oidc.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Com.Scm.Oidc.Wpf"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="登录成功" Height="240" Width="360">
+    <hc:Card BorderThickness="1"
+             Effect="{StaticResource EffectShadow2}"
+             Margin="8">
+        <StackPanel Margin="10">
+            <Grid>
+                <TextBlock HorizontalAlignment="Center" Text="恭喜，登录成功" Style="{StaticResource TextBlockLargeBold}"/>
+            </Grid>
+            <hc:Gravatar Style="{StaticResource GravatarCircleImg}" Margin="0,20">
+                <Image x:Name="PbIcon"/>
+            </hc:Gravatar>
+            <Grid>
+                <TextBlock x:Name="TbInfo" HorizontalAlignment="Center" Text="您好！" Style="{StaticResource TextBlockTitleBold}"/>
+            </Grid>
+        </StackPanel>
+    </hc:Card>
 </Window>

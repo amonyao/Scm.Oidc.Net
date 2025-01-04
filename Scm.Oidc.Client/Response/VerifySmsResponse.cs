@@ -1,4 +1,5 @@
 ﻿using Com.Scm.Oidc;
+using Com.Scm.Oidc.Response;
 
 namespace Com.Scm.Response
 {
@@ -7,5 +8,6 @@ namespace Com.Scm.Response
     /// </summary>
     public class VerifySmsResponse : OidcResponse
     {
+        public OidcUserInfo User { get; set; }
     }
 }
