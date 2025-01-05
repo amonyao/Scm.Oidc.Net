@@ -7,7 +7,7 @@
            mc:Ignorable="d"
            ResizeMode="NoResize"
            WindowStartupLocation="CenterScreen"
-           Title="登录成功"
+           Title="登录成功" Icon="/oidc.png"
            Height="250" Width="360">
     <hc:Card BorderThickness="1"
              Effect="{StaticResource EffectShadow2}"

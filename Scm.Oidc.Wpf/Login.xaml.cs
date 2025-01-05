@@ -34,9 +34,11 @@ namespace Com.Scm
             TbYear.Text = DateTime.Now.Year.ToString();
 
             _Config = new OidcConfig();
-            _Config.AppKey = "08dd257b536dd96c";
-            _Config.AppSecret = "ngkeeptx9hwjwrm8ivsqrq6ic59h0ebs";
-            //_Config.LoadDefault();
+            // 使用演示应用
+            _Config.UserDemo();
+            // 此处也可以修改为您自己的应用
+            //_Config.AppKey = "08dd257b536dd96c";
+            //_Config.AppSecret = "ngkeeptx9hwjwrm8ivsqrq6ic59h0ebs";
 
             _Client = new OidcClient(_Config);
 
@@ -83,7 +85,7 @@ namespace Com.Scm
                 return;
             }
 
-            Browse(_Client.GetLoginUrl(osp.Code, ""));
+            Browse(_Client.GetLoginUrl(osp.Code, "login"));
         }
 
         /// <summary>
@@ -323,6 +325,7 @@ namespace Com.Scm
             try
             {
                 Process.Start("explorer.exe", url);
+                //Process.Start(url);
             }
             catch
             {

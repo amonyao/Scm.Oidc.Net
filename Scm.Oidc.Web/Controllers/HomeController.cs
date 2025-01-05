@@ -34,7 +34,7 @@ namespace Com.Scm.Oidc.Web.Controllers
         /// <returns></returns>
         public IActionResult Html()
         {
-            ViewBag.LoginUrl = _OidcClient.GetLoginUrl();
+            ViewBag.LoginUrl = _OidcClient.GetWebUrl();
 
             return View();
         }
@@ -98,9 +98,9 @@ namespace Com.Scm.Oidc.Web.Controllers
         /// <param name="state">附加参数，可选</param>
         /// <returns></returns>
         [HttpGet("home/login")]
-        public async Task<LoginResponse> LoginAsync(string ospCode, string state = null)
+        public LoginResponse LoginAsync(string ospCode, string state = null)
         {
-            return await _OidcClient.LoginAsync(ospCode, state);
+            return null;// _OidcClient.GetLoginUrl(ospCode, state);
         }
         #endregion
 

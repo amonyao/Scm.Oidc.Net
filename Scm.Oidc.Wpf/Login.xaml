@@ -5,10 +5,10 @@
            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
            xmlns:hc="https://handyorg.github.io/handycontrol"
-           WindowStartupLocation="CenterScreen"
            mc:Ignorable="d"
-           Title="OIDC用户登录"
            ResizeMode="NoResize"
+           WindowStartupLocation="CenterScreen"
+           Title="OIDC用户登录" Icon="/oidc.png"
            Height="480" Width="320">
     <hc:Card BorderThickness="1"
              Effect="{StaticResource EffectShadow2}"

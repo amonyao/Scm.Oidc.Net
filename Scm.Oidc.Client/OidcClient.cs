@@ -11,7 +11,7 @@ namespace Com.Scm.Oidc
     /// </summary>
     public class OidcClient
     {
-#if DEBUG
+#if DEBUG0
         /// <summary>
         /// 服务端路径
         /// </summary>
@@ -20,7 +20,7 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 服务端路径
         /// </summary>
-        public const string BASE_URL = "http://oidc.org.cn";
+        public const string BASE_URL = "http://www.oidc.org.cn";
 #endif
         /// <summary>
         /// 数据路径
