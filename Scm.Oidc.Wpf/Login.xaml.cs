@@ -45,10 +45,10 @@ namespace Com.Scm
             var ospList = await _Client.ListAppOspAsync();
             foreach (var osp in ospList)
             {
-                if (!osp.IsOAuth())
-                {
-                    continue;
-                }
+                //if (!osp.IsOAuth())
+                //{
+                //    continue;
+                //}
 
                 var button = new Button();
                 button.Margin = new Thickness(2);

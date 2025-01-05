@@ -7,10 +7,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <RootNamespace>Com.Scm</RootNamespace>
+    <StartupObject>Com.Scm.Oidc.Wpf.App</StartupObject>
+    <ApplicationIcon>oidc.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="oidc.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="oidc.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -97,7 +97,7 @@
                         Click="BtVerify_Click"/>
             </hc:ElementGroup>
             <hc:Divider Content="三方登录" Margin="0,10" HorizontalContentAlignment="Center"/>
-            <StackPanel x:Name="SpOAuth" Orientation="Horizontal"></StackPanel>
+            <StackPanel x:Name="SpOAuth" Orientation="Horizontal" HorizontalAlignment="Center"></StackPanel>
             <Grid Margin="0,20,0,0">
                 <TextBlock TextAlignment="Center">©<TextBlock x:Name="TbYear"></TextBlock> <Hyperlink Name="HlSite" NavigateUri="http://www.oidc.org.cn" Click="HlSite_Click">OIDC.org.cn</Hyperlink></TextBlock>
             </Grid>
