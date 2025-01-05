@@ -12,7 +12,7 @@
             if (envConfig == null)
             {
                 envConfig = new OidcConfig();
-                envConfig.LoadDefault();
+                envConfig.UserDemo();
             }
             envConfig.Prepare();
 
