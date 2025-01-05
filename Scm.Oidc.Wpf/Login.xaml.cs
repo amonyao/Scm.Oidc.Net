@@ -13,12 +13,14 @@ namespace Com.Scm
     /// <summary>
     /// Login.xaml 的交互逻辑
     /// </summary>
-    public partial class Login : Window
+    public partial class Login : HandyControl.Controls.Window
     {
+        private OidcConfig _Config;
         private OidcClient _Client;
         private OidcSmsEnums _Type = OidcSmsEnums.Email;
         private string _Key;
         private string _Code;
+        private string _Seq;
 
         public Login()
         {
@@ -31,12 +33,12 @@ namespace Com.Scm
         {
             TbYear.Text = DateTime.Now.Year.ToString();
 
-            var config = new OidcConfig();
-            config.AppKey = "08dd257b536dd96c";
-            config.AppSecret = "ngkeeptx9hwjwrm8ivsqrq6ic59h0ebs";
-            //config.LoadDefault();
+            _Config = new OidcConfig();
+            _Config.AppKey = "08dd257b536dd96c";
+            _Config.AppSecret = "ngkeeptx9hwjwrm8ivsqrq6ic59h0ebs";
+            //_Config.LoadDefault();
 
-            _Client = new OidcClient(config);
+            _Client = new OidcClient(_Config);
 
             var ospList = await _Client.ListAppOspAsync();
             foreach (var osp in ospList)
@@ -62,7 +64,12 @@ namespace Com.Scm
             }
         }
 
-        private async void BtOAuth_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 三方登录功能
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtOAuth_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button == null)
@@ -76,11 +83,7 @@ namespace Com.Scm
                 return;
             }
 
-            var response = await _Client.LoginAsync(osp.Code, "login");
-            if (response == null)
-            {
-                return;
-            }
+            Browse(_Client.GetLoginUrl(osp.Code, ""));
         }
 
         /// <summary>
@@ -127,6 +130,10 @@ namespace Com.Scm
             }
         }
 
+        /// <summary>
+        /// 发送短信
+        /// </summary>
+        /// <returns></returns>
         private async Task SendPhone()
         {
             var phone = TbPhone.Text.Trim();
@@ -145,6 +152,10 @@ namespace Com.Scm
             await SendSms(phone);
         }
 
+        /// <summary>
+        /// 发送邮件
+        /// </summary>
+        /// <returns></returns>
         private async Task SendEmail()
         {
             var email = TbEmail.Text.Trim();
@@ -163,14 +174,19 @@ namespace Com.Scm
             await SendSms(email);
         }
 
+        /// <summary>
+        /// 发送验证码
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         private async Task SendSms(string code)
         {
             BtSend.IsEnabled = false;
 
             _Code = code;
-            _Key = UuidString();
+            _Seq = TextUtils.GuidString();
 
-            var response = await _Client.SendSmsAsync(_Type, code, _Key);
+            var response = await _Client.SendSmsAsync(_Type, code, _Seq);
             if (response == null)
             {
                 BtSend.IsEnabled = true;
@@ -184,9 +200,15 @@ namespace Com.Scm
                 return;
             }
 
+            _Key = response.Key;
             CountDown(BtSend);
         }
 
+        /// <summary>
+        /// 用户登录事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void BtVerify_Click(object sender, RoutedEventArgs e)
         {
             var sms = TbSms.Text.Trim();
@@ -203,7 +225,7 @@ namespace Com.Scm
             }
 
             BtVerify.IsEnabled = false;
-            var response = await _Client.VerifySmsAsync(_Type, _Code, _Key, sms);
+            var response = await _Client.VerifySmsAsync(_Config.AppKey, _Key, sms);
             if (response == null)
             {
                 BtVerify.IsEnabled = true;
@@ -221,11 +243,30 @@ namespace Com.Scm
             Close();
         }
 
+        /// <summary>
+        /// 访问网站事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HlSite_Click(object sender, RoutedEventArgs e)
+        {
+            Browse("http://www.oidc.org.cn");
+        }
+
+        /// <summary>
+        /// 显示提示信息
+        /// </summary>
+        /// <param name="message"></param>
         private void ShowNotice(string message)
         {
             TbNotice.Text = message;
         }
 
+        /// <summary>
+        /// 倒计时功能
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="step"></param>
         private void CountDown(Button button, int step = 60)
         {
             if (button == null || step < 1)
@@ -247,6 +288,11 @@ namespace Com.Scm
             }));
         }
 
+        /// <summary>
+        /// 跨线程修改按钮的使能状态
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="enabled"></param>
         private void ChangeEnabled(Button button, bool enabled)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -255,6 +301,11 @@ namespace Com.Scm
             });
         }
 
+        /// <summary>
+        /// 跨线程修改按钮的显示内容
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="content"></param>
         private void ShowContent(Button button, object content)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -263,16 +314,15 @@ namespace Com.Scm
             });
         }
 
-        private string UuidString()
-        {
-            return TextUtils.ToHexString(Guid.NewGuid().ToByteArray());
-        }
-
-        private void HlSite_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 使用系统默认浏览器，访问指定地址
+        /// </summary>
+        /// <param name="url"></param>
+        private void Browse(string url)
         {
             try
             {
-                Process.Start("explorer.exe", "http://www.oidc.org.cn");
+                Process.Start("explorer.exe", url);
             }
             catch
             {

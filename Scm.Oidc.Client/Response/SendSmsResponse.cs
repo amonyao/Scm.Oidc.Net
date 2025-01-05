@@ -5,5 +5,6 @@
     /// </summary>
     public class SendSmsResponse : OidcResponse
     {
+        public string Key { get; set; }
     }
 }

@@ -98,10 +98,10 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
-        public string GetLoginUrl(string state = null)
+        public string GetWebUrl(string state = null)
         {
             var url = GenBaseUrl("/Web/Login");
-            url += "?key=" + _Config.AppKey;
+            url += "?client_id=" + _Config.AppKey;
             if (state != null)
             {
                 url += "&state=" + state;
@@ -183,18 +183,14 @@ namespace Com.Scm.Oidc
         /// <param name="ospCode">服务商代码</param>
         /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
-        public async Task<LoginResponse> LoginAsync(string ospCode, string state = null)
+        public string GetLoginUrl(string ospCode, string state = null)
         {
             var url = GenAuthUrl("/Login");
             url += "/" + ospCode;
+            url += "?client_id=" + _Config.AppKey;
+            url += "&state=" + state;
 
-            var body = new Dictionary<string, string>()
-            {
-                ["key"] = _Config.AppKey,
-                ["state"] = state
-            };
-
-            return await HttpUtils.GetObjectAsync<LoginResponse>(url, body, null);
+            return url;
         }
         #endregion
 
@@ -204,14 +200,14 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="type">验证码类型</param>
         /// <param name="code">验证码接收地址（邮件或手机）</param>
-        /// <param name="key">自定义识别码，用于后续校验时使用</param>
+        /// <param name="seq">自定义识别码，用于防重复提交</param>
         /// <returns></returns>
-        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string key = null)
+        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string seq = null)
         {
             var url = GenAuthUrl("/SendSms");
             url += "?type=" + type;
             url += "&code=" + code;
-            url += "&key=" + key;
+            url += "&seq=" + seq;
 
             return await HttpUtils.GetObjectAsync<SendSmsResponse>(url);
         }
@@ -219,15 +215,14 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 登录
         /// </summary>
-        /// <param name="code">验证码接收地址（邮件或手机）</param>
-        /// <param name="key">自定义识别码，与发送验证时的Key一致</param>
+        /// <param name="client_id">应用ID</param>
+        /// <param name="key">发送验证码时，服务端返回的Key</param>
         /// <param name="sms">验证码</param>
         /// <returns></returns>
-        public async Task<VerifySmsResponse> VerifySmsAsync(OidcSmsEnums type, string code, string key, string sms)
+        public async Task<VerifySmsResponse> VerifySmsAsync(string client_id, string key, string sms)
         {
             var url = GenAuthUrl("/VerifySms");
-            url += "?type=" + (int)type;
-            url += "&code=" + code;
+            url += "?client_id=" + client_id;
             url += "&key=" + key;
             url += "&sms=" + sms;
 
