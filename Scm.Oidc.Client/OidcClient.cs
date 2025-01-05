@@ -11,7 +11,7 @@ namespace Com.Scm.Oidc
     /// </summary>
     public class OidcClient
     {
-#if DEBUG0
+#if DEBUG
         /// <summary>
         /// 服务端路径
         /// </summary>
