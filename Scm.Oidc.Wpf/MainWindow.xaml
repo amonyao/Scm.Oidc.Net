@@ -16,7 +16,7 @@
             <Grid>
                 <TextBlock HorizontalAlignment="Center" Text="恭喜，登录成功" Style="{StaticResource TextBlockLargeBold}"/>
             </Grid>
-            <Border Width="64" Height="64" CornerRadius="32" BorderThickness="3" BorderBrush="Red" Background="#FAFAFA" Margin="0,20">
+            <Border Width="80" Height="80" CornerRadius="40" BorderThickness="3" BorderBrush="Red" Background="#FAFAFA" Margin="0,20">
                 <Image x:Name="PbIcon"/>
             </Border>
             <Grid>

@@ -1,5 +1,6 @@
 ﻿using Com.Scm.Oidc;
 using Com.Scm.Oidc.Response;
+using Com.Scm.Oidc.Wpf;
 using System.Diagnostics;
 using System.Windows;
 
@@ -65,6 +66,12 @@ namespace Com.Scm
             UcOAuth.Visibility = Visibility.Visible;
 
             UcOAuth.Login(ospInfo);
+        }
+
+        public void ShowUser(OidcUserInfo user)
+        {
+            new MainWindow().ShowInfo(user);
+            Close();
         }
 
         /// <summary>

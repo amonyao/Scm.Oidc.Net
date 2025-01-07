@@ -1,6 +1,5 @@
 ﻿using Com.Scm.Oidc;
 using Com.Scm.Oidc.Response;
-using Com.Scm.Oidc.Wpf;
 using Com.Scm.Utils;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -231,8 +230,7 @@ namespace Com.Scm.Uc
                 return;
             }
 
-            new MainWindow().ShowInfo(response.User);
-            _Owner.Close();
+            _Owner.ShowUser(response.User);
         }
 
         /// <summary>
@@ -277,7 +275,7 @@ namespace Com.Scm.Uc
         /// <param name="enabled"></param>
         private void ChangeEnabled(Button button, bool enabled)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 button.IsEnabled = enabled;
             });
@@ -290,7 +288,7 @@ namespace Com.Scm.Uc
         /// <param name="content"></param>
         private void ChangeContent(Button button, object content)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 button.Content = content;
             });

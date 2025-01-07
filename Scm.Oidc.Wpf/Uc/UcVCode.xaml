@@ -84,7 +84,7 @@
                         Content="登录"
                         Click="BtVerify_Click"/>
         </hc:ElementGroup>
-        <hc:Divider Content="三方登录" Margin="0,10" HorizontalContentAlignment="Center"/>
+        <hc:Divider Content="三方登录" Margin="0,15" HorizontalContentAlignment="Center"/>
         <StackPanel x:Name="SpOAuth" Orientation="Horizontal" HorizontalAlignment="Center"></StackPanel>
     </StackPanel>
 </UserControl>

@@ -221,7 +221,7 @@ namespace Com.Scm.Oidc
 
         #region 代码调用登录
         /// <summary>
-        /// 直接登录
+        /// 执行登录（适用于服务端）
         /// </summary>
         /// <param name="ospCode">服务商代码</param>
         /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
@@ -232,6 +232,21 @@ namespace Com.Scm.Oidc
             url += "/" + ospCode;
             url += "?client_id=" + _Config.AppKey;
             url += "&state=" + state;
+
+            return url;
+        }
+
+        /// <summary>
+        /// 执行登录（适用于客户端）
+        /// </summary>
+        /// <param name="ospCode"></param>
+        /// <param name="ticket"></param>
+        /// <returns></returns>
+        public string GetTicketUrl(string ospCode, string ticket)
+        {
+            var url = GenAuthUrl("/Ticket");
+            url += "/" + ospCode;
+            url += "?ticket=" + ticket;
 
             return url;
         }

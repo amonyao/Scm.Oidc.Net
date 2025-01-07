@@ -6,23 +6,29 @@
              mc:Ignorable="d" 
              d:DesignHeight="240" d:DesignWidth="340">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom">
+        <StackPanel DockPanel.Dock="Bottom" Margin="10,0,10,10">
+            <TextBlock x:Name="TbNotice"
+                       Margin="10"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">系统授权中…</TextBlock>
             <Button x:Name="BtReturn"
-                    Margin="10,5,10,10"
                     HorizontalAlignment="Stretch"
                     Style="{StaticResource ButtonPrimary}"
                     Click="BtReturn_Click">返回</Button>
         </StackPanel>
-        <Grid Margin="10,10,10,5">
-            <Border>
-                <Image x:Name="PbLogo" Width="80" Height="80" />
+        <Border Background="#F0F0F0"
+                Margin="10,10,10,0"
+                CornerRadius="5"
+                BorderThickness="1"
+                BorderBrush="LightGray">
+            <Border BorderThickness="3"
+                    BorderBrush="Red"
+                    Width="80"
+                    Height="80"
+                    CornerRadius="40">
+                <Image x:Name="PbLogo" Width="64" Height="64" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
             </Border>
-            <Border Background="LightGray"
-                    Opacity="0.3"
-                    CornerRadius="5"
-                    BorderThickness="1"
-                    BorderBrush="Gray"></Border>
-            <TextBlock x:Name="TbNotice" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">adfadfadf</TextBlock>
-        </Grid>
+        </Border>
     </DockPanel>
 </UserControl>
