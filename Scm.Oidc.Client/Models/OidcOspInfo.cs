@@ -47,7 +47,7 @@
         /// <returns></returns>
         public bool IsEmail()
         {
-            return Type == OidcOspEnums.Email;
+            return Type == OidcOspEnums.VCode && Code.ToLower() == "email";
         }
 
         /// <summary>
@@ -56,7 +56,7 @@
         /// <returns></returns>
         public bool IsPhone()
         {
-            return Type == OidcOspEnums.Phone;
+            return Type == OidcOspEnums.VCode && Code.ToLower() == "phone";
         }
 
         /// <summary>
@@ -66,6 +66,24 @@
         public bool IsOAuth()
         {
             return Type == OidcOspEnums.OAuth;
+        }
+
+        /// <summary>
+        /// 是否授权登录
+        /// </summary>
+        /// <returns></returns>
+        public bool IsVCode()
+        {
+            return Type == OidcOspEnums.VCode;
+        }
+
+        /// <summary>
+        /// 是否扫码登录
+        /// </summary>
+        /// <returns></returns>
+        public bool IsScan()
+        {
+            return Type == OidcOspEnums.Scan;
         }
 
         /// <summary>

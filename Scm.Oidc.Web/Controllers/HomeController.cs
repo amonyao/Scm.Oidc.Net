@@ -84,9 +84,9 @@ namespace Com.Scm.Oidc.Web.Controllers
         /// <param name="sms"></param>
         /// <returns></returns>
         [HttpGet("home/verifySms")]
-        public async Task<VerifySmsResponse> VerifySmsAsync(string code, string key, string sms)
+        public async Task<VerifySmsResponse> VerifySmsAsync(string key, string sms)
         {
-            return await _OidcClient.VerifySmsAsync(code, key, sms);
+            return await _OidcClient.VerifySmsAsync(key, sms);
         }
         #endregion
 
@@ -118,7 +118,7 @@ namespace Com.Scm.Oidc.Web.Controllers
                 return ReturnToError(response.GetMessage());
             }
 
-            ViewBag.User = response.User;
+            ViewBag.User = response.Data.User;
             return View();
         }
         #endregion

@@ -10,21 +10,18 @@
         /// </summary>
         None = 0,
         /// <summary>
-        /// 手机号码
+        /// 三方授权
         /// </summary>
-        Phone = 1,
+        OAuth = 1,
         /// <summary>
-        /// 电子邮件
+        /// 验证登录
         /// </summary>
-        Email = 2,
+        VCode = 2,
         /// <summary>
-        /// 扫码
+        /// 扫码登录
         /// </summary>
         Scan = 3,
-        /// <summary>
-        /// 三方登录
-        /// </summary>
-        OAuth = 4,
+
         /// <summary>
         /// 更多
         /// </summary>

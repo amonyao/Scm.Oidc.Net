@@ -29,7 +29,7 @@
         /// <summary>
         /// 使用测试应用
         /// </summary>
-        public void UserTest()
+        public void UseTest()
         {
             AppKey = "08dc965832db7248";
             AppSecret = "50qvwk2mynnxiq20rgzrx8w8s94kfaml";
@@ -38,7 +38,7 @@
         /// <summary>
         /// 使用演示应用
         /// </summary>
-        public void UserDemo()
+        public void UseDemo()
         {
             AppKey = "08dd24bcbf6c7612";
             AppSecret = "835g6dqnl462py752upaevrzfk0ehjtg";

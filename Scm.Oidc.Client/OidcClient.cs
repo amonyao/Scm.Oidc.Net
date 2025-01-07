@@ -111,6 +111,7 @@ namespace Com.Scm.Oidc
         #endregion
 
         #region OAuth登录
+        #region 服务端模式
         /// <summary>
         /// 登录授权
         /// </summary>
@@ -147,6 +148,48 @@ namespace Com.Scm.Oidc
 
             return await HttpUtils.PostFormObjectAsync<AccessTokenResponse>(url, body, null);
         }
+        #endregion
+
+        #region 客户端模式
+        /// <summary>
+        /// 握手
+        /// </summary>
+        /// <returns></returns>
+        public async Task<HandshakeResponse> HandshakeAsync(string request_id)
+        {
+            var url = GenAuthUrl("/Handshake");
+
+            var body = new Dictionary<string, string>()
+            {
+                ["response_type"] = "token",
+                ["client_id"] = _Config.AppKey,
+                ["redirect_uri"] = "",
+                ["state"] = "login",
+                ["scope"] = "",
+                ["request_id"] = request_id
+            };
+
+            return await HttpUtils.GetObjectAsync<HandshakeResponse>(url, body, null);
+        }
+
+        /// <summary>
+        /// 侦听
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ListenResponse> GetListen(TicketInfo ticket)
+        {
+            var url = GenAuthUrl("/Listen");
+
+            var body = new Dictionary<string, string>()
+            {
+                ["client_id"] = _Config.AppKey,
+                ["ticket"] = ticket.Code,
+                ["salt"] = ticket.Salt
+            };
+
+            return await HttpUtils.GetObjectAsync<ListenResponse>(url, body, null);
+        }
+        #endregion
 
         /// <summary>
         /// 刷新令牌
@@ -219,10 +262,10 @@ namespace Com.Scm.Oidc
         /// <param name="key">发送验证码时，服务端返回的Key</param>
         /// <param name="sms">验证码</param>
         /// <returns></returns>
-        public async Task<VerifySmsResponse> VerifySmsAsync(string client_id, string key, string sms)
+        public async Task<VerifySmsResponse> VerifySmsAsync(string key, string sms)
         {
             var url = GenAuthUrl("/VerifySms");
-            url += "?client_id=" + client_id;
+            url += "?client_id=" + _Config.AppKey;
             url += "&key=" + key;
             url += "&sms=" + sms;
 
@@ -297,4 +340,6 @@ namespace Com.Scm.Oidc
         }
         #endregion
     }
+
+    public delegate int ListCallback(AccessTokenResponse response);
 }
