@@ -113,17 +113,23 @@ namespace Com.Scm.Oidc
         #region OAuth登录
         #region 服务端模式
         /// <summary>
-        /// 登录授权
+        /// 引导授权，适用于服务端
         /// </summary>
         /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
-        public string Authorize(string state = null)
+        public string GetAuthorizeUrl(string state = null, string scope = null)
         {
-            var url = GenAuthUrl("/Authorize");
+            var url = GenAuthUrl("/AuthorizeA");
             url += "?response_type=code";
             url += "&redirect_uri=" + _Config.RedirectUrl;
-            url += "&state=" + state;
-            //url += "&scope=";
+            if (state != null)
+            {
+                url += "&state=" + state;
+            }
+            if (scope != null)
+            {
+                url += "&scope=" + scope;
+            }
 
             return url;
         }
@@ -155,7 +161,7 @@ namespace Com.Scm.Oidc
         /// 握手
         /// </summary>
         /// <returns></returns>
-        public async Task<HandshakeResponse> HandshakeAsync(string request_id)
+        public async Task<HandshakeResponse> HandshakeAsync(string state)
         {
             var url = GenAuthUrl("/Handshake");
 
@@ -164,9 +170,9 @@ namespace Com.Scm.Oidc
                 ["response_type"] = "token",
                 ["client_id"] = _Config.AppKey,
                 ["redirect_uri"] = "",
-                ["state"] = "login",
+                ["state"] = state,
                 ["scope"] = "",
-                ["request_id"] = request_id
+                ["request_id"] = TextUtils.TimeString()
             };
 
             return await HttpUtils.GetObjectAsync<HandshakeResponse>(url, body, null);
@@ -189,6 +195,7 @@ namespace Com.Scm.Oidc
 
             return await HttpUtils.GetObjectAsync<ListenResponse>(url, body, null);
         }
+        #endregion
         #endregion
 
         /// <summary>
@@ -217,21 +224,48 @@ namespace Com.Scm.Oidc
 
             return await HttpUtils.PostFormObjectAsync<RefreshTokenResponse>(url, body, header);
         }
-        #endregion
 
         #region 代码调用登录
         /// <summary>
+        /// 引导授权，适用于客户端
+        /// </summary>
+        /// <param name="ticket"></param>
+        /// <returns></returns>
+        public string GetAuthorizeBUrl(string ticket)
+        {
+            var url = GenAuthUrl("/AuthorizeB");
+            url += "?ticket=" + ticket;
+
+            return url;
+        }
+
+        /// <summary>
         /// 执行登录（适用于服务端）
         /// </summary>
-        /// <param name="ospCode">服务商代码</param>
-        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
+        /// <param name="ospCode"></param>
+        /// <param name="state"></param>
         /// <returns></returns>
-        public string GetLoginUrl(string ospCode, string state = null)
+        public string GetLoginAUrl(string ospCode, string responseType, string redirectUri, string state = null, string scope = null)
         {
-            var url = GenAuthUrl("/Login");
+            var url = GenAuthUrl("/LoginB");
             url += "/" + ospCode;
             url += "?client_id=" + _Config.AppKey;
-            url += "&state=" + state;
+            if (responseType != null)
+            {
+                url += "&response_type=" + responseType;
+            }
+            if (redirectUri != null)
+            {
+                url += "&redirect_uri=" + redirectUri;
+            }
+            if (state != null)
+            {
+                url += "&state=" + state;
+            }
+            if (scope != null)
+            {
+                url += "&scope=" + scope;
+            }
 
             return url;
         }
@@ -239,12 +273,12 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 执行登录（适用于客户端）
         /// </summary>
-        /// <param name="ospCode"></param>
-        /// <param name="ticket"></param>
+        /// <param name="ospCode">服务商代码</param>
+        /// <param name="ticket">访问票据</param>
         /// <returns></returns>
-        public string GetTicketUrl(string ospCode, string ticket)
+        public string GetLoginBUrl(string ospCode, string ticket)
         {
-            var url = GenAuthUrl("/Ticket");
+            var url = GenAuthUrl("/LoginB");
             url += "/" + ospCode;
             url += "?ticket=" + ticket;
 

@@ -80,16 +80,14 @@ namespace Com.Scm
         /// <param name="url"></param>
         public void Browse(string url)
         {
-            var idx = url.IndexOf("?");
-            if (idx > 0)
+            if (string.IsNullOrWhiteSpace(url))
             {
-                url = url.Replace("?", "\"?") + "\"";
+                return;
             }
 
             try
             {
-                Process.Start("explorer.exe", url);
-                //Process.Start(url);
+                Process.Start("explorer.exe", '"' + url + '"');
             }
             catch
             {

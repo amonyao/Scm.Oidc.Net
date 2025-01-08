@@ -1,7 +1,6 @@
 ﻿using Com.Scm.Oidc;
 using Com.Scm.Oidc.Response;
 using Com.Scm.Response;
-using Com.Scm.Utils;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -35,7 +34,7 @@ namespace Com.Scm.Uc
 
             PbLogo.Source = new BitmapImage(new Uri(ospInfo.GetIconUrl()));
 
-            var response = await _Client.HandshakeAsync(TextUtils.TimeString());
+            var response = await _Client.HandshakeAsync("login");
             if (response == null)
             {
                 ShowNotice("");
@@ -48,26 +47,8 @@ namespace Com.Scm.Uc
             }
 
             _Ticket = response.Ticket;
-            _Owner.Browse(_Client.GetTicketUrl(ospInfo.Code, _Ticket.Code));
+            _Owner.Browse(_Client.GetLoginBUrl(ospInfo.Code, _Ticket.Code));
             Listen();
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request_id"></param>
-        /// <returns></returns>
-        private async Task<bool> GetTicket(string request_id)
-        {
-            var response = await _Client.HandshakeAsync(request_id);
-            if (response == null || !response.IsSuccess())
-            {
-                return false;
-            }
-
-            _Ticket = response.Ticket;
-            return true;
         }
 
         private void Listen()
