@@ -47,7 +47,7 @@ namespace Com.Scm.Uc
             }
 
             _Ticket = response.Ticket;
-            _Owner.Browse(_Client.GetLoginBUrl(ospInfo.Code, _Ticket.Code));
+            _Owner.Browse(_Client.GetOAuthUrl(ospInfo, _Ticket.Code));
             Listen();
         }
 

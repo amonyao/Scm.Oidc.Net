@@ -11,7 +11,7 @@ namespace Com.Scm.Oidc
     /// </summary>
     public class OidcClient
     {
-#if DEBUG
+#if DEBUG0
         /// <summary>
         /// 服务端路径
         /// </summary>
@@ -96,12 +96,19 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 登录地址
         /// </summary>
+        /// <param name="responseType">响应方式</param>
         /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
-        public string GetWebUrl(string state = null)
+        public string GetWebUrl(string responseType, string state = null)
         {
+            if (responseType == null)
+            {
+                return null;
+            }
+
             var url = GenBaseUrl("/Web/Login");
             url += "?client_id=" + _Config.AppKey;
+            url += "&response_type=" + responseType;
             if (state != null)
             {
                 url += "&state=" + state;
@@ -283,6 +290,23 @@ namespace Com.Scm.Oidc
             url += "?ticket=" + ticket;
 
             return url;
+        }
+
+        /// <summary>
+        /// 根据服务商返回不同的授权路径
+        /// </summary>
+        /// <param name="osp"></param>
+        /// <param name="ticket"></param>
+        /// <returns></returns>
+        public string GetOAuthUrl(OidcOspInfo osp, string ticket)
+        {
+            if (osp == null || osp.IsMore())
+            {
+                return GetAuthorizeBUrl(ticket);
+            }
+
+
+            return GetLoginBUrl(osp.Code, ticket);
         }
         #endregion
 

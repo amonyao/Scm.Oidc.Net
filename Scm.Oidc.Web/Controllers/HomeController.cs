@@ -34,7 +34,7 @@ namespace Com.Scm.Oidc.Web.Controllers
         /// <returns></returns>
         public IActionResult Html()
         {
-            ViewBag.LoginUrl = _OidcClient.GetWebUrl();
+            ViewBag.LoginUrl = _OidcClient.GetWebUrl("code");
 
             return View();
         }

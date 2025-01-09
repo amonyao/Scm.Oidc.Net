@@ -78,10 +78,18 @@ namespace Com.Scm
         /// 使用系统默认浏览器，访问指定地址
         /// </summary>
         /// <param name="url"></param>
-        public void Browse(string url)
+        public void Browse(string url, bool native = true)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
+                return;
+            }
+
+            if (!native)
+            {
+                var browser = new Browser();
+                browser.Owner = this;
+                browser.Open(url);
                 return;
             }
 
@@ -89,8 +97,9 @@ namespace Com.Scm
             {
                 Process.Start("explorer.exe", '"' + url + '"');
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
     }
