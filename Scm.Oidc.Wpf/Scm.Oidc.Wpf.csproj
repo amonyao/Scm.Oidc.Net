@@ -23,6 +23,7 @@
     <PackageReference Include="HandyControl" Version="3.5.1" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Scm.Common.Log">
+      <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Log.dll</HintPath>
+    </Reference>
     <Reference Include="Scm.Common.Text">
       <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Text.dll</HintPath>
     </Reference>

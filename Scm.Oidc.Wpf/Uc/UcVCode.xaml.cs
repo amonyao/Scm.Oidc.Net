@@ -216,7 +216,7 @@ namespace Com.Scm.Uc
             }
 
             BtVerify.IsEnabled = false;
-            var response = await _Client.VerifySmsAsync(_Key, sms);
+            var response = await _Client.VerifySmsAAsync(_Key, sms);
             if (response == null)
             {
                 BtVerify.IsEnabled = true;

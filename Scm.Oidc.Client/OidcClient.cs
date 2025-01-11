@@ -329,16 +329,32 @@ namespace Com.Scm.Oidc
         }
 
         /// <summary>
-        /// 登录
+        /// 校验验证码，适用于服务端
         /// </summary>
-        /// <param name="client_id">应用ID</param>
         /// <param name="key">发送验证码时，服务端返回的Key</param>
         /// <param name="sms">验证码</param>
         /// <returns></returns>
-        public async Task<VerifySmsResponse> VerifySmsAsync(string key, string sms)
+        public async Task<VerifySmsResponse> VerifySmsAAsync(string key, string sms)
         {
-            var url = GenAuthUrl("/VerifySms");
+            var url = GenAuthUrl("/VerifySmsA");
             url += "?client_id=" + _Config.AppKey;
+            url += "&key=" + key;
+            url += "&sms=" + sms;
+
+            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url);
+        }
+
+        /// <summary>
+        /// 校验验证码，适用于客户端
+        /// </summary>
+        /// <param name="ticket"></param>
+        /// <param name="key"></param>
+        /// <param name="sms"></param>
+        /// <returns></returns>
+        public async Task<VerifySmsResponse> VerifySmsBAsync(string ticket, string key, string sms)
+        {
+            var url = GenAuthUrl("/VerifySmsA");
+            url += "?ticket=" + ticket;
             url += "&key=" + key;
             url += "&sms=" + sms;
 

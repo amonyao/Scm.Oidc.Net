@@ -86,7 +86,7 @@ namespace Com.Scm.Oidc.Web.Controllers
         [HttpGet("home/verifySms")]
         public async Task<VerifySmsResponse> VerifySmsAsync(string key, string sms)
         {
-            return await _OidcClient.VerifySmsAsync(key, sms);
+            return await _OidcClient.VerifySmsAAsync(key, sms);
         }
         #endregion
 

@@ -70,7 +70,7 @@ namespace Com.Scm
 
         public void ShowUser(OidcUserInfo user)
         {
-            new MainWindow().ShowInfo(user);
+            new UserInfo().ShowInfo(user);
             Close();
         }
 
