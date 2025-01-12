@@ -34,3 +34,6 @@ OIDC的特点：
 ![验证登录界面](screenshots/vcode.png)  
 ![授权登录界面](screenshots/oauth.png)  
 ![授权成功界面](screenshots/success.png)  
+
+QQ沟通群：  
+![QQ沟通群](qq.jpg)  
