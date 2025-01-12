@@ -118,7 +118,7 @@ namespace Com.Scm.Oidc.Web.Controllers
                 return ReturnToError(response.GetMessage());
             }
 
-            ViewBag.User = response.Data.User;
+            ViewBag.User = response.User;
             return View();
         }
         #endregion

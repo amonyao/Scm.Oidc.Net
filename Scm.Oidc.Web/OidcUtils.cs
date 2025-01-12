@@ -8,15 +8,15 @@
         {
             Configuration = builder.Configuration;
 
-            var envConfig = GetConfig<OidcConfig>("Oidc");
-            if (envConfig == null)
+            var oidcConfig = GetConfig<OidcConfig>("Oidc");
+            if (oidcConfig == null)
             {
-                envConfig = new OidcConfig();
-                envConfig.UseDemo();
+                oidcConfig = new OidcConfig();
+                oidcConfig.UseDemo();
             }
-            envConfig.Prepare();
+            oidcConfig.Prepare();
 
-            var oidcClient = new OidcClient(envConfig);
+            var oidcClient = new OidcClient(oidcConfig);
             builder.Services.AddSingleton(oidcClient);
         }
 

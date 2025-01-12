@@ -3,6 +3,9 @@ using Com.Scm.Oidc.Response;
 
 namespace Com.Scm.Response
 {
+    /// <summary>
+    /// 侦听响应
+    /// </summary>
     public class ListenResponse : OidcResponse
     {
         public TicketInfo Ticket { get; set; }

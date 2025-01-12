@@ -2,6 +2,9 @@
 
 namespace Com.Scm.Models
 {
+    /// <summary>
+    /// 令牌信息
+    /// </summary>
     public class OidcTokenInfo
     {
         /// <summary>

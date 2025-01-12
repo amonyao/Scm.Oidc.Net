@@ -13,6 +13,7 @@ namespace Com.Scm.Oidc
     /// </summary>
     public class OidcClient
     {
+        #region 常量
         public const string PARAM_KEY_CLIENT_ID = "client_id";
         public const string PARAM_KEY_CLIENT_SECRET = "client_secret";
         public const string PARAM_KEY_RESPONSE_TYPE = "response_type";
@@ -31,8 +32,7 @@ namespace Com.Scm.Oidc
 
         public const string PARAM_KEY_NONCE = "nonce";
 
-
-#if DEBUG0
+#if DEBUG
         /// <summary>
         /// 服务端路径
         /// </summary>
@@ -43,6 +43,7 @@ namespace Com.Scm.Oidc
         /// </summary>
         public const string BASE_URL = "http://www.oidc.org.cn";
 #endif
+
         /// <summary>
         /// 数据路径
         /// </summary>
@@ -51,6 +52,7 @@ namespace Com.Scm.Oidc
         /// 授权路径
         /// </summary>
         public const string OAUTH_URL = BASE_URL + "/oauth";
+        #endregion
 
         /// <summary>
         /// OIDC配置
@@ -66,6 +68,7 @@ namespace Com.Scm.Oidc
             if (config == null)
             {
                 config = new OidcConfig();
+                config.UseDemo();
             }
 
             _Config = config;

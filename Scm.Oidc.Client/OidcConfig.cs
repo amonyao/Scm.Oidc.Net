@@ -1,7 +1,7 @@
 ﻿namespace Com.Scm.Oidc
 {
     /// <summary>
-    /// 系统配置
+    /// OIDC配置
     /// </summary>
     public class OidcConfig
     {

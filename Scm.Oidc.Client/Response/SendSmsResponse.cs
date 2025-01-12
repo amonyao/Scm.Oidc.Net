@@ -5,6 +5,9 @@
     /// </summary>
     public class SendSmsResponse : OidcResponse
     {
+        /// <summary>
+        /// 消息凭据，用于后续的消息校验使用
+        /// </summary>
         public string Key { get; set; }
     }
 }

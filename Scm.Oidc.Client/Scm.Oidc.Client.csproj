@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Scm.Common.Http">
       <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Http.dll</HintPath>
     </Reference>

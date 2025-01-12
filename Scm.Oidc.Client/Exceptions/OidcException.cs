@@ -2,6 +2,9 @@
 
 namespace Com.Scm.Exceptions
 {
+    /// <summary>
+    /// OIDC异常
+    /// </summary>
     public class OidcException : Exception
     {
         public OidcException() { }

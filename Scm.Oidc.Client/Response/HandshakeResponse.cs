@@ -2,6 +2,9 @@
 
 namespace Com.Scm.Response
 {
+    /// <summary>
+    /// 握手响应
+    /// </summary>
     public class HandshakeResponse : OidcResponse
     {
         public TicketInfo Ticket { get; set; }

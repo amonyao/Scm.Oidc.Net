@@ -8,13 +8,14 @@ namespace Com.Scm.Response
     /// </summary>
     public class VerifySmsResponse : OidcResponse
     {
-        public string key { get; set; }
+        /// <summary>
+        /// 授权响应，用于后续的换取访问令牌
+        /// </summary>
+        public string Key { get; set; }
 
-        public string redirect_url { get; set; }
-        public string grant_type { get; set; }
-        public string grant_data { get; set; }
-        public string state { get; set; }
-
+        /// <summary>
+        /// 用户信息（基于当前授权会话的用户信息）
+        /// </summary>
         public OidcUserInfo User { get; set; }
     }
 }
