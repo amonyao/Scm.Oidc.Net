@@ -16,8 +16,12 @@
             <Grid>
                 <TextBlock HorizontalAlignment="Center" Text="恭喜，登录成功" Style="{StaticResource TextBlockLargeBold}"/>
             </Grid>
-            <Border Width="80" Height="80" CornerRadius="40" BorderThickness="3" BorderBrush="Red" Background="#FAFAFA" Margin="0,20">
-                <Image x:Name="PbIcon" Margin="5"/>
+            <Border Width="80" Height="80" CornerRadius="40" BorderThickness="5" BorderBrush="Red" Background="#FAFAFA" Margin="0,20">
+                <Image x:Name="PbIcon" Width="64" Height="64">
+                    <Image.Clip>
+                        <EllipseGeometry RadiusX="32" RadiusY="32" Center="32,32"/>
+                    </Image.Clip>
+                </Image>
             </Border>
             <Grid>
                 <TextBlock x:Name="TbInfo" HorizontalAlignment="Center" Text="您好！" Style="{StaticResource TextBlockTitleBold}"/>

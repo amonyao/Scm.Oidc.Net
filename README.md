@@ -31,5 +31,6 @@ OIDC的特点：
 请移步这里查看演示：[演示链接](http://demo.oidc.org.cn)
 
 客户端效果：  
-![用户登录界面](screenshots/login.png)  
+![验证登录界面](screenshots/vcode.png)  
+![授权登录界面](screenshots/oauth.png)  
 ![授权成功界面](screenshots/success.png)  
