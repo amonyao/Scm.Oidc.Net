@@ -3,32 +3,33 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              mc:Ignorable="d" 
              d:DesignHeight="240" d:DesignWidth="340">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" Margin="10,0,10,10">
-            <TextBlock x:Name="TbNotice"
-                       Margin="10"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center">系统授权中…</TextBlock>
+        <StackPanel DockPanel.Dock="Bottom" Margin="10,0">
             <Button x:Name="BtReturn"
                     HorizontalAlignment="Stretch"
                     Style="{StaticResource ButtonPrimary}"
                     Click="BtReturn_Click">返回</Button>
         </StackPanel>
         <Border Background="#F0F0F0"
-                Margin="10,10,10,0"
+                Margin="10"
                 CornerRadius="5"
                 BorderThickness="1"
                 BorderBrush="LightGray">
-            <Border BorderThickness="3"
-                    BorderBrush="Red"
-                    Width="80"
-                    Height="80"
-                    CornerRadius="40">
-                <Image x:Name="PbLogo" Width="64" Height="64" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
-            </Border>
+            <DockPanel>
+                <TextBlock x:Name="TbNotice"
+                           DockPanel.Dock="Bottom"
+                           Margin="10"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">系统授权中…</TextBlock>
+                <Grid Width="80" Height="80">
+                    <Image x:Name="PbLogo" Width="32" Height="32" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                    <hc:LoadingCircle x:Name="LcLoading" Width="80" Height="80" Foreground="Red" Style="{StaticResource LoadingCircleLargeLight}"/>
+                </Grid>
+            </DockPanel>
         </Border>
     </DockPanel>
 </UserControl>

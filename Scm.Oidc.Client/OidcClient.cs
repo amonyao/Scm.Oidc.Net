@@ -1,7 +1,9 @@
-﻿using Com.Scm.Oidc.Response;
+﻿using Com.Scm.Exceptions;
+using Com.Scm.Oidc.Response;
 using Com.Scm.Response;
 using Com.Scm.Utils;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Com.Scm.Oidc
@@ -11,6 +13,25 @@ namespace Com.Scm.Oidc
     /// </summary>
     public class OidcClient
     {
+        public const string PARAM_KEY_CLIENT_ID = "client_id";
+        public const string PARAM_KEY_CLIENT_SECRET = "client_secret";
+        public const string PARAM_KEY_RESPONSE_TYPE = "response_type";
+        public const string PARAM_KEY_REDIRECT_URI = "redirect_uri";
+        public const string PARAM_KEY_STATE = "state";
+        public const string PARAM_KEY_SCOPE = "scope";
+
+        public const string PARAM_KEY_GRANT_TYPE = "grant_type";
+        public const string PARAM_KEY_CODE = "code";
+        public const string PARAM_KEY_REFRESH_TOKEN = "refresh_token";
+        public const string PARAM_KEY_AUTHORIZATION = "Authorization";
+
+        public const string PARAM_KEY_TICKET = "ticket";
+        public const string PARAM_KEY_SALT = "salt";
+        public const string PARAM_KEY_REQUEST_ID = "request_id";
+
+        public const string PARAM_KEY_NONCE = "nonce";
+
+
 #if DEBUG0
         /// <summary>
         /// 服务端路径
@@ -94,26 +115,28 @@ namespace Com.Scm.Oidc
         }
 
         /// <summary>
-        /// 登录地址
+        /// 获取OIDC标准网页登录地址
         /// </summary>
         /// <param name="responseType">响应方式</param>
-        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
+        /// <param name=PARAM_KEY_STATE>发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
         public string GetWebUrl(string responseType, string state = null)
         {
             if (responseType == null)
             {
-                return null;
+                throw new OidcException("response_type 不能为空！");
             }
 
             var url = GenBaseUrl("/Web/Login");
-            url += "?client_id=" + _Config.AppKey;
-            url += "&response_type=" + responseType;
-            if (state != null)
+
+            var val = new Dictionary<string, string>()
             {
-                url += "&state=" + state;
-            }
-            return url;
+                {PARAM_KEY_CLIENT_ID, _Config.AppKey},
+                {PARAM_KEY_RESPONSE_TYPE, responseType},
+                {PARAM_KEY_STATE, state},
+            };
+
+            return HttpUtils.BuildUrl(val, url);
         }
         #endregion
 
@@ -122,23 +145,21 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 引导授权，适用于服务端
         /// </summary>
-        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
+        /// <param name=PARAM_KEY_STATE>发起方自定义参数，此参数在回调时进行回传</param>
         /// <returns></returns>
-        public string GetAuthorizeUrl(string state = null, string scope = null)
+        public string GetAuthorizeAUrl(string state = null, string scope = null)
         {
             var url = GenAuthUrl("/AuthorizeA");
-            url += "?response_type=code";
-            url += "&redirect_uri=" + _Config.RedirectUrl;
-            if (state != null)
-            {
-                url += "&state=" + state;
-            }
-            if (scope != null)
-            {
-                url += "&scope=" + scope;
-            }
 
-            return url;
+            var val = new Dictionary<string, string>()
+            {
+                { PARAM_KEY_RESPONSE_TYPE, "code"},
+                { PARAM_KEY_REDIRECT_URI, _Config.RedirectUrl},
+                { PARAM_KEY_STATE, state},
+                {PARAM_KEY_SCOPE, scope},
+            };
+
+            return HttpUtils.BuildUrl(val, url);
         }
 
         /// <summary>
@@ -148,15 +169,20 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<AccessTokenResponse> AccessTokenAsync(string code)
         {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                throw new OidcException("code 不能为空！");
+            }
+
             var url = GenAuthUrl("/Token");
 
             var body = new Dictionary<string, string>()
             {
-                ["grant_type"] = "authorization_code",
-                ["code"] = code,
-                ["client_id"] = _Config.AppKey,
-                ["client_secret"] = _Config.AppSecret,
-                ["redirect_uri"] = _Config.RedirectUrl
+                [PARAM_KEY_GRANT_TYPE] = "authorization_code",
+                [PARAM_KEY_CODE] = code,
+                [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
+                [PARAM_KEY_CLIENT_SECRET] = _Config.AppSecret,
+                [PARAM_KEY_REDIRECT_URI] = _Config.RedirectUrl
             };
 
             return await HttpUtils.PostFormObjectAsync<AccessTokenResponse>(url, body, null);
@@ -174,12 +200,12 @@ namespace Com.Scm.Oidc
 
             var body = new Dictionary<string, string>()
             {
-                ["response_type"] = "token",
-                ["client_id"] = _Config.AppKey,
-                ["redirect_uri"] = "",
-                ["state"] = state,
-                ["scope"] = "",
-                ["request_id"] = TextUtils.TimeString()
+                [PARAM_KEY_RESPONSE_TYPE] = "token",
+                [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
+                [PARAM_KEY_REDIRECT_URI] = "",
+                [PARAM_KEY_STATE] = state,
+                [PARAM_KEY_SCOPE] = "",
+                [PARAM_KEY_REQUEST_ID] = TextUtils.TimeString()
             };
 
             return await HttpUtils.GetObjectAsync<HandshakeResponse>(url, body, null);
@@ -191,13 +217,18 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<ListenResponse> GetListen(TicketInfo ticket)
         {
+            if (ticket == null)
+            {
+                throw new OidcException("ticket 不能为空！");
+            }
+
             var url = GenAuthUrl("/Listen");
 
             var body = new Dictionary<string, string>()
             {
-                ["client_id"] = _Config.AppKey,
-                ["ticket"] = ticket.Code,
-                ["salt"] = ticket.Salt
+                [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
+                [PARAM_KEY_TICKET] = ticket.Code,
+                [PARAM_KEY_SALT] = ticket.Salt
             };
 
             return await HttpUtils.GetObjectAsync<ListenResponse>(url, body, null);
@@ -213,20 +244,30 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<RefreshTokenResponse> RefreshTokenAsync(string accessToken, string refreshToken)
         {
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                throw new OidcException("accessToken 不能为空！");
+            }
+
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                throw new OidcException("refreshToken 不能为空！");
+            }
+
             var url = GenAuthUrl("/Token");
 
             var header = new Dictionary<string, string>()
             {
-                ["Authorization"] = accessToken,
+                [PARAM_KEY_AUTHORIZATION] = accessToken,
             };
 
             var body = new Dictionary<string, string>()
             {
-                ["grant_type"] = "refresh_token",
-                ["refresh_token"] = refreshToken,
-                ["client_id"] = _Config.AppKey,
-                ["client_secret"] = _Config.AppSecret,
-                ["redirect_uri"] = _Config.RedirectUrl
+                [PARAM_KEY_GRANT_TYPE] = "refresh_token",
+                [PARAM_KEY_REFRESH_TOKEN] = refreshToken,
+                [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
+                [PARAM_KEY_CLIENT_SECRET] = _Config.AppSecret,
+                [PARAM_KEY_REDIRECT_URI] = _Config.RedirectUrl
             };
 
             return await HttpUtils.PostFormObjectAsync<RefreshTokenResponse>(url, body, header);
@@ -235,13 +276,19 @@ namespace Com.Scm.Oidc
         #region 代码调用登录
         /// <summary>
         /// 引导授权，适用于客户端
+        /// 此方法适用于不指定授权服务商的情况
         /// </summary>
         /// <param name="ticket"></param>
         /// <returns></returns>
         public string GetAuthorizeBUrl(string ticket)
         {
+            if (!IsTicket(ticket))
+            {
+                throw new OidcException("无效的 ticket！");
+            }
+
             var url = GenAuthUrl("/AuthorizeB");
-            url += "?ticket=" + ticket;
+            url += $"?{PARAM_KEY_TICKET}={ticket}";
 
             return url;
         }
@@ -250,31 +297,26 @@ namespace Com.Scm.Oidc
         /// 执行登录（适用于服务端）
         /// </summary>
         /// <param name="ospCode"></param>
-        /// <param name="state"></param>
+        /// <param name=PARAM_KEY_STATE></param>
         /// <returns></returns>
         public string GetLoginAUrl(string ospCode, string responseType, string redirectUri, string state = null, string scope = null)
         {
-            var url = GenAuthUrl("/LoginB");
-            url += "/" + ospCode;
-            url += "?client_id=" + _Config.AppKey;
-            if (responseType != null)
+            if (string.IsNullOrWhiteSpace(ospCode))
             {
-                url += "&response_type=" + responseType;
-            }
-            if (redirectUri != null)
-            {
-                url += "&redirect_uri=" + redirectUri;
-            }
-            if (state != null)
-            {
-                url += "&state=" + state;
-            }
-            if (scope != null)
-            {
-                url += "&scope=" + scope;
+                throw new OidcException("无效的 ospCode！");
             }
 
-            return url;
+            var url = GenAuthUrl("/LoginB/" + ospCode);
+            var val = new Dictionary<string, string>()
+            {
+                { PARAM_KEY_CLIENT_ID, _Config.AppKey},
+                { PARAM_KEY_RESPONSE_TYPE, responseType},
+                { PARAM_KEY_REDIRECT_URI, redirectUri},
+                { PARAM_KEY_STATE, state},
+                { PARAM_KEY_SCOPE, scope}
+            };
+
+            return HttpUtils.BuildUrl(val, url);
         }
 
         /// <summary>
@@ -285,15 +327,23 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public string GetLoginBUrl(string ospCode, string ticket)
         {
-            var url = GenAuthUrl("/LoginB");
-            url += "/" + ospCode;
-            url += "?ticket=" + ticket;
+            if (string.IsNullOrWhiteSpace(ospCode))
+            {
+                throw new OidcException("无效的 ospCode！");
+            }
+            if (!IsTicket(ticket))
+            {
+                throw new OidcException("无效的 ticket！");
+            }
+
+            var url = GenAuthUrl("/LoginB/" + ospCode);
+            url += $"?{PARAM_KEY_TICKET}={ticket}";
 
             return url;
         }
 
         /// <summary>
-        /// 根据服务商返回不同的授权路径
+        /// 根据服务商返回不同的授权路径，适用于客户端
         /// </summary>
         /// <param name="osp"></param>
         /// <param name="ticket"></param>
@@ -316,16 +366,29 @@ namespace Com.Scm.Oidc
         /// </summary>
         /// <param name="type">验证码类型</param>
         /// <param name="code">验证码接收地址（邮件或手机）</param>
-        /// <param name="seq">自定义识别码，用于防重复提交</param>
+        /// <param name="requestId">请求ID，用于防重复提交</param>
         /// <returns></returns>
-        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string seq = null)
+        public async Task<SendSmsResponse> SendSmsAsync(OidcSmsEnums type, string code, string requestId = null)
         {
-            var url = GenAuthUrl("/SendSms");
-            url += "?type=" + type;
-            url += "&code=" + code;
-            url += "&seq=" + seq;
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                throw new OidcException("code 不能为空！");
+            }
 
-            return await HttpUtils.GetObjectAsync<SendSmsResponse>(url);
+            if (string.IsNullOrWhiteSpace(requestId))
+            {
+                requestId = TextUtils.TimeString();
+            }
+
+            var url = GenAuthUrl("/SendSms");
+            var val = new Dictionary<string, string>()
+            {
+                ["type"] = type.ToString(),
+                ["code"] = code,
+                ["request_id"] = requestId
+            };
+
+            return await HttpUtils.GetObjectAsync<SendSmsResponse>(HttpUtils.BuildUrl(val, url));
         }
 
         /// <summary>
@@ -336,12 +399,24 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<VerifySmsResponse> VerifySmsAAsync(string key, string sms)
         {
-            var url = GenAuthUrl("/VerifySmsA");
-            url += "?client_id=" + _Config.AppKey;
-            url += "&key=" + key;
-            url += "&sms=" + sms;
+            if (!IsTicket(key))
+            {
+                throw new OidcException("无效的 key！");
+            }
+            if (!IsSmsCode(sms))
+            {
+                throw new OidcException("无效的 sms！");
+            }
 
-            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url);
+            var url = GenAuthUrl("/VerifySmsA");
+            var val = new Dictionary<string, string>()
+            {
+                [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
+                ["key"] = key,
+                ["sms"] = sms
+            };
+
+            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(HttpUtils.BuildUrl(val, url));
         }
 
         /// <summary>
@@ -353,10 +428,27 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<VerifySmsResponse> VerifySmsBAsync(string ticket, string key, string sms)
         {
+            if (!IsTicket(ticket))
+            {
+                throw new OidcException("无效的 ticket！");
+            }
+
+            if (!IsTicket(key))
+            {
+                throw new OidcException("无效的 key！");
+            }
+            if (!IsSmsCode(sms))
+            {
+                throw new OidcException("无效的 sms！");
+            }
+
             var url = GenAuthUrl("/VerifySmsA");
-            url += "?ticket=" + ticket;
-            url += "&key=" + key;
-            url += "&sms=" + sms;
+            var val = new Dictionary<string, string>()
+            {
+                [PARAM_KEY_TICKET] = ticket,
+                ["key"] = key,
+                ["sms"] = sms
+            };
 
             return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url);
         }
@@ -379,7 +471,7 @@ namespace Com.Scm.Oidc
 
         #region 心跳
         /// <summary>
-        /// 心跳
+        /// 心跳，适用于客户端
         /// </summary>
         /// <param name="accessToken">访问令牌</param>
         /// <param name="type">心跳类型</param>
@@ -427,8 +519,16 @@ namespace Com.Scm.Oidc
             var text = _Config.AppSecret + "@" + nonce + "@" + _Config.AppSecret;
             return TextUtils.Md5(text);
         }
+
+        public bool IsSmsCode(string sms)
+        {
+            return sms != null && Regex.IsMatch(sms, @"^\d{6}$");
+        }
+
+        public bool IsTicket(string ticket)
+        {
+            return ticket != null && Regex.IsMatch(ticket, @"^[\da-fA-F]{32}$");
+        }
         #endregion
     }
-
-    public delegate int ListCallback(AccessTokenResponse response);
 }

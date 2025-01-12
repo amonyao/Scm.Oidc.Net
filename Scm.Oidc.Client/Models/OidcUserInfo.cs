@@ -24,7 +24,7 @@
         /// <returns></returns>
         public string GetAvatarUrl()
         {
-            return OidcClient.BASE_URL + Avatar;
+            return OidcClient.BASE_URL + "/data/avatar/" + Avatar;
         }
     }
 }

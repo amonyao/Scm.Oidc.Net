@@ -1,7 +1,6 @@
 ﻿using Com.Scm.Oidc;
 using Com.Scm.Oidc.Response;
 using Com.Scm.Utils;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -9,17 +8,26 @@ using System.Windows.Media.Imaging;
 namespace Com.Scm.Uc
 {
     /// <summary>
-    /// UcVCode.xaml 的交互逻辑
+    /// 验证码登录
     /// </summary>
     public partial class UcVCode : UserControl
     {
+        /// <summary>
+        /// 父窗体
+        /// </summary>
         private Login _Owner;
+        /// <summary>
+        /// OIDC客户端
+        /// </summary>
         private OidcClient _Client;
-
+        /// <summary>
+        /// 消息类型
+        /// </summary>
         private OidcSmsEnums _Type = OidcSmsEnums.Email;
-        private string _Key;
-        private string _Code;
-        private string _Seq;
+        /// <summary>
+        /// 消息凭据
+        /// </summary>
+        private string _SmsKey;
 
         public UcVCode()
         {
@@ -168,16 +176,13 @@ namespace Com.Scm.Uc
         /// <summary>
         /// 发送验证码
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="code">消息地址</param>
         /// <returns></returns>
         private async Task SendSms(string code)
         {
             BtSend.IsEnabled = false;
 
-            _Code = code;
-            _Seq = TextUtils.GuidString();
-
-            var response = await _Client.SendSmsAsync(_Type, code, _Seq);
+            var response = await _Client.SendSmsAsync(_Type, code);
             if (response == null)
             {
                 BtSend.IsEnabled = true;
@@ -191,7 +196,7 @@ namespace Com.Scm.Uc
                 return;
             }
 
-            _Key = response.Key;
+            _SmsKey = response.Key;
             CountDown(BtSend);
         }
 
@@ -209,14 +214,14 @@ namespace Com.Scm.Uc
                 return;
             }
 
-            if (!Regex.IsMatch(sms, @"^\d{6}$"))
+            if (!_Client.IsSmsCode(sms))
             {
                 ShowNotice("无效的验证码格式！");
                 return;
             }
 
             BtVerify.IsEnabled = false;
-            var response = await _Client.VerifySmsAAsync(_Key, sms);
+            var response = await _Client.VerifySmsAAsync(_SmsKey, sms);
             if (response == null)
             {
                 BtVerify.IsEnabled = true;
