@@ -36,4 +36,4 @@ OIDC的特点：
 ![授权成功界面](screenshots/success.png)  
 
 QQ沟通群：  
-![QQ沟通群](qq.jpg)  
+![QQ沟通群](qq.jpg =385*685)  
