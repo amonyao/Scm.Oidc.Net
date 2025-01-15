@@ -412,14 +412,14 @@ namespace Com.Scm.Oidc
             }
 
             var url = GenAuthUrl("/VerifySmsA");
-            var val = new Dictionary<string, string>()
+            var body = new Dictionary<string, string>()
             {
                 [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
                 ["key"] = key,
                 ["sms"] = sms
             };
 
-            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(HttpUtils.BuildUrl(val, url));
+            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url, body);
         }
 
         /// <summary>
@@ -446,14 +446,14 @@ namespace Com.Scm.Oidc
             }
 
             var url = GenAuthUrl("/VerifySmsA");
-            var val = new Dictionary<string, string>()
+            var body = new Dictionary<string, string>()
             {
                 [PARAM_KEY_TICKET] = ticket,
                 ["key"] = key,
                 ["sms"] = sms
             };
 
-            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url);
+            return await HttpUtils.PostFormObjectAsync<VerifySmsResponse>(url, body);
         }
         #endregion
 
