@@ -54,6 +54,8 @@ namespace Com.Scm.Oidc
         public const string OAUTH_URL = BASE_URL + "/oauth";
         #endregion
 
+        public const string Ver = "1.0";
+
         /// <summary>
         /// OIDC配置
         /// </summary>
