@@ -15,13 +15,4 @@
     <ProjectReference Include="..\Scm.Oidc.Client\Scm.Oidc.Client.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Scm.Common.Http">
-      <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Scm.Common.Text">
-      <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Text.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

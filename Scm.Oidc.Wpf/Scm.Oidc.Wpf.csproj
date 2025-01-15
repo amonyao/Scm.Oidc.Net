@@ -31,15 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Scm.Common.Log">
-      <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Log.dll</HintPath>
-    </Reference>
-    <Reference Include="Scm.Common.Text">
-      <HintPath>..\..\..\Scm\libs\netstandard2.0\Scm.Common.Text.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="oidc.png" />
   </ItemGroup>
 
