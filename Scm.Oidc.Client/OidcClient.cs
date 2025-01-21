@@ -20,6 +20,9 @@ namespace Com.Scm.Oidc
         public const string PARAM_KEY_REDIRECT_URI = "redirect_uri";
         public const string PARAM_KEY_STATE = "state";
         public const string PARAM_KEY_SCOPE = "scope";
+        public const string PARAM_KEY_CODE_CHALLENGE = "code_challenge";
+        public const string PARAM_KEY_CODE_CHALLENGE_METHOD = "code_challenge_method";
+        public const string PARAM_KEY_CODE_VERIFIER = "code_verifier";
 
         public const string PARAM_KEY_GRANT_TYPE = "grant_type";
         public const string PARAM_KEY_CODE = "code";
@@ -60,6 +63,10 @@ namespace Com.Scm.Oidc
         /// OIDC配置
         /// </summary>
         private OidcConfig _Config;
+        /// <summary>
+        /// PKCE对象
+        /// </summary>
+        private PkceObject _Object;
 
         /// <summary>
         /// 构造器
@@ -74,6 +81,7 @@ namespace Com.Scm.Oidc
             }
 
             _Config = config;
+            _Object = new PkceObject();
         }
 
         #region 公共方法
@@ -150,18 +158,23 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 引导授权，适用于服务端
         /// </summary>
-        /// <param name=PARAM_KEY_STATE>发起方自定义参数，此参数在回调时进行回传</param>
+        /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
+        /// <param name="scope"></param>
         /// <returns></returns>
         public string GetAuthorizeAUrl(string state = null, string scope = null)
         {
             var url = GenAuthUrl("/AuthorizeA");
 
+            _Object.Generate();
+
             var val = new Dictionary<string, string>()
             {
-                { PARAM_KEY_RESPONSE_TYPE, "code"},
-                { PARAM_KEY_REDIRECT_URI, _Config.RedirectUrl},
-                { PARAM_KEY_STATE, state},
-                {PARAM_KEY_SCOPE, scope},
+                [PARAM_KEY_RESPONSE_TYPE] = "code",
+                [PARAM_KEY_REDIRECT_URI] = _Config.RedirectUrl,
+                [PARAM_KEY_STATE] = state,
+                [PARAM_KEY_SCOPE] = scope,
+                [PARAM_KEY_CODE_CHALLENGE] = _Object.code_challenge,
+                [PARAM_KEY_CODE_CHALLENGE_METHOD] = _Object.code_challenge_method
             };
 
             return HttpUtils.BuildUrl(val, url);
@@ -187,7 +200,8 @@ namespace Com.Scm.Oidc
                 [PARAM_KEY_CODE] = code,
                 [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
                 [PARAM_KEY_CLIENT_SECRET] = _Config.AppSecret,
-                [PARAM_KEY_REDIRECT_URI] = _Config.RedirectUrl
+                [PARAM_KEY_REDIRECT_URI] = _Config.RedirectUrl,
+                [PARAM_KEY_CODE_VERIFIER] = _Object.code_verifier
             };
 
             return await HttpUtils.PostFormObjectAsync<AccessTokenResponse>(url, body, null);
