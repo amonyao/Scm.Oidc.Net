@@ -1,9 +1,9 @@
 # Scm.Oidc
 
 #### 介绍
-OIDC(OpenID Connect)：简单、易用的多平台联合登录系统。 
-OIDC同时支持OAuth1.0、OAuth2.0协议，支持国内外近百家大型网站的登录与授权： 
-支付宝、阿里云、Apple Inc.、百度、Coding、钉钉、抖音、Facebook、飞书、Gitee、Github、GitLab、Google、华为、京东、快手、领英、美团、小米、微软、OSChina、QQ、微博、StackOverflow、Teambition、微信、WPS、小红书、迅雷、OPPO、Vivo、荣耀、印象笔记、开放原子、魅族、360、Evernote、Amazon、Slack、Yahoo、X、Yandex、VK.ru、Ok.ru、Mail.ru、DCloud、Notion、Figma、Atlassian、Line、Linear、Zoom、Discord、Bitbucket、Adobe、Dropbox、Zoho、Box、Todoist、Tower，更多支持还在持续更新中…… 
+OIDC(OpenID Connect)：简单、易用的多平台联合登录系统。  
+OIDC同时支持OAuth1.0、OAuth2.0协议，支持国内外近百家大型网站的登录与授权：  
+支付宝、阿里云、Apple Inc.、百度、Coding、钉钉、抖音、Facebook、飞书、Gitee、Github、GitLab、Google、华为、京东、快手、领英、美团、小米、微软、OSChina、QQ、微博、StackOverflow、Teambition、微信、WPS、小红书、迅雷、OPPO、Vivo、荣耀、印象笔记、开放原子、魅族、360、Evernote、Amazon、Slack、Yahoo、X、Yandex、VK.ru、Ok.ru、Mail.ru、DCloud、Notion、Figma、Atlassian、Line、Linear、Zoom、Discord、Bitbucket、Adobe、Dropbox、Zoho、Box、Todoist、Tower，更多支持还在持续更新中……   
 
 您是否遇到过这样的场景？ 
 
