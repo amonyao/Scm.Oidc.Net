@@ -63,6 +63,7 @@ namespace Com.Scm.Uc
             Listen();
         }
 
+        #region 侦听
         private void Listen()
         {
             _MaxTime = 60 * 10;// 等待10分钟
@@ -76,7 +77,7 @@ namespace Com.Scm.Uc
             {
                 _MaxTime -= 1;
 
-                var response = await _Client.GetListen(_Ticket);
+                var response = await _Client.ListenAsync(_Ticket);
                 if (response == null)
                 {
                     ShowNotice("服务访问异常！");
@@ -118,7 +119,7 @@ namespace Com.Scm.Uc
                 if (ticket.Result == ListenResult.Success)
                 {
                     ShowNotice("用户授权成功");
-                    ShowUserInfo(response.User);
+                    ShowUserInfo(response);
                     return;
                 }
 
@@ -128,15 +129,30 @@ namespace Com.Scm.Uc
             ShowNotice("授权超时，请返回重试！");
             LcLoading.Visibility = System.Windows.Visibility.Hidden;
         }
+        #endregion
 
-        private void BtReturn_Click(object sender, System.Windows.RoutedEventArgs e)
+        /// <summary>
+        /// 获取全局用户信息
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task<OidcUserInfo> GetUnionUserInfoAsync(string token)
         {
-            _MaxTime = 0;
-            _Owner.ShowVCode();
+            var response = await _Client.GetUserInfoAsync(token);
+            if (response == null || !response.IsSuccess())
+            {
+                return null;
+            }
+
+            return response.User;
         }
 
-        private void ShowUserInfo(OidcUserInfo user)
+        private async void ShowUserInfo(ListenResponse response)
         {
+            var oauthUser = response.User;
+            var unionUser = await GetUnionUserInfoAsync(response.access_token);
+            var user = unionUser != null ? unionUser : oauthUser;
+
             Dispatcher.Invoke(() =>
             {
                 _Owner.ShowUser(user);
@@ -149,6 +165,12 @@ namespace Com.Scm.Uc
             {
                 TbNotice.Text = message;
             });
+        }
+
+        private void BtReturn_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            _MaxTime = 0;
+            _Owner.ShowVCode();
         }
     }
 }

@@ -22,7 +22,7 @@ internal class Program
         var max = 60;
         while (max > 0)
         {
-            var responses = await _Client.GetListen(ticket);
+            var responses = await _Client.ListenAsync(ticket);
             if (!responses.IsSuccess())
             {
                 Console.WriteLine(responses.GetMessage());

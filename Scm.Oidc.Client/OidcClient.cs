@@ -159,7 +159,7 @@ namespace Com.Scm.Oidc
         /// 引导授权，适用于服务端
         /// </summary>
         /// <param name="state">发起方自定义参数，此参数在回调时进行回传</param>
-        /// <param name="scope"></param>
+        /// <param name="scope">授权范围，可以为空</param>
         /// <returns></returns>
         public string GetAuthorizeAUrl(string state = null, string scope = null)
         {
@@ -212,6 +212,7 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 握手
         /// </summary>
+        /// <param name="state">回调参数，可以为空</param>
         /// <returns></returns>
         public async Task<HandshakeResponse> HandshakeAsync(string state)
         {
@@ -233,8 +234,9 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 侦听
         /// </summary>
+        /// <param name="ticket">服务交互凭证</param>
         /// <returns></returns>
-        public async Task<ListenResponse> GetListen(TicketInfo ticket)
+        public async Task<ListenResponse> ListenAsync(TicketInfo ticket)
         {
             if (ticket == null)
             {
@@ -253,6 +255,7 @@ namespace Com.Scm.Oidc
             return await HttpUtils.GetObjectAsync<ListenResponse>(url, body, null);
         }
         #endregion
+
         #endregion
 
         /// <summary>
@@ -315,8 +318,11 @@ namespace Com.Scm.Oidc
         /// <summary>
         /// 执行登录（适用于服务端）
         /// </summary>
-        /// <param name="ospCode"></param>
-        /// <param name=PARAM_KEY_STATE></param>
+        /// <param name="ospCode">服务商代码</param>
+        /// <param name="responseType">响应方式</param>
+        /// <param name="redirectUri">回调地址</param>
+        /// <param name="state">回调参数</param>
+        /// <param name="scope">权限范围</param>
         /// <returns></returns>
         public string GetLoginAUrl(string ospCode, string responseType, string redirectUri, string state = null, string scope = null)
         {
@@ -379,7 +385,7 @@ namespace Com.Scm.Oidc
         }
         #endregion
 
-        #region 授权码登录
+        #region 验证码登录
         /// <summary>
         /// 发送验证码
         /// </summary>
@@ -481,7 +487,7 @@ namespace Com.Scm.Oidc
         /// <returns></returns>
         public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
         {
-            var url = GenAuthUrl("/UserInfo");
+            var url = GenAuthUrl("/User");
             url += "?token=" + accessToken;
 
             return await HttpUtils.GetObjectAsync<UserInfoResponse>(url);

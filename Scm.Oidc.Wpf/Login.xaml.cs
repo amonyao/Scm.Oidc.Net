@@ -29,8 +29,8 @@ namespace Com.Scm
             // 使用演示应用
             _Config.UseDemo();
             // 此处也可以修改为您自己的应用
-            //_Config.AppKey = "08dd257b536dd96c";
-            //_Config.AppSecret = "ngkeeptx9hwjwrm8ivsqrq6ic59h0ebs";
+            //_Config.AppKey = "YOUR_APP_KEY";
+            //_Config.AppSecret = "YOUR_APP_SECRET";
             _Config.Prepare();
 
             _Client = new OidcClient(_Config);
