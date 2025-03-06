@@ -30,7 +30,7 @@ namespace Com.Scm.Oidc
         public const string PARAM_KEY_AUTHORIZATION = "Authorization";
 
         public const string PARAM_KEY_TICKET = "ticket";
-        public const string PARAM_KEY_SALT = "salt";
+        public const string PARAM_KEY_DIGEST = "digest";
         public const string PARAM_KEY_REQUEST_ID = "request_id";
 
         public const string PARAM_KEY_NONCE = "nonce";
@@ -249,7 +249,7 @@ namespace Com.Scm.Oidc
             {
                 [PARAM_KEY_CLIENT_ID] = _Config.AppKey,
                 [PARAM_KEY_TICKET] = ticket.Code,
-                [PARAM_KEY_SALT] = ticket.Salt
+                [PARAM_KEY_DIGEST] = ticket.GetDigest()
             };
 
             return await HttpUtils.GetObjectAsync<ListenResponse>(url, body, null);

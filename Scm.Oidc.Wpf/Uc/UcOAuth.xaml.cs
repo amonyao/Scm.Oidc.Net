@@ -66,16 +66,17 @@ namespace Com.Scm.Uc
         #region 侦听
         private void Listen()
         {
-            _MaxTime = 60 * 10;// 等待10分钟
+            _MaxStep = 60 * 10;// 等待10分钟
             Task.Run(ListenAsync);
         }
 
-        private int _MaxTime = 0;
+        private int _MaxStep = 0;
         private async Task ListenAsync()
         {
-            while (_MaxTime > 0)
+            while (_MaxStep > 0)
             {
-                _MaxTime -= 1;
+                _MaxStep -= 1;
+                Thread.Sleep(1000);
 
                 var response = await _Client.ListenAsync(_Ticket);
                 if (response == null)
@@ -89,41 +90,38 @@ namespace Com.Scm.Uc
                     return;
                 }
 
-                _Ticket = response.Ticket;
+                _Ticket.Salt = response.Salt;
 
-                var ticket = response.Ticket;
-                if (ticket.Handle == ListenHandle.None)
+                if (response.Handle == ListenHandle.None)
                 {
                     //ShowNotice("等待用户授权");
-                    return;
+                    continue;
                 }
 
-                if (ticket.Handle == ListenHandle.Todo)
+                if (response.Handle == ListenHandle.Todo)
                 {
                     ShowNotice("等待用户授权");
                     continue;
                 }
 
-                if (ticket.Handle == ListenHandle.Doing)
+                if (response.Handle == ListenHandle.Doing)
                 {
                     ShowNotice("用户授权中…");
                     continue;
                 }
 
-                if (ticket.Result == ListenResult.Failure)
+                if (response.Result == ListenResult.Failure)
                 {
                     ShowNotice("用户授权失败");
                     return;
                 }
 
-                if (ticket.Result == ListenResult.Success)
+                if (response.Result == ListenResult.Success)
                 {
                     ShowNotice("用户授权成功");
                     ShowUserInfo(response);
                     return;
                 }
-
-                Thread.Sleep(1000);
             }
 
             ShowNotice("授权超时，请返回重试！");
@@ -169,7 +167,7 @@ namespace Com.Scm.Uc
 
         private void BtReturn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            _MaxTime = 0;
+            _MaxStep = 0;
             _Owner.ShowVCode();
         }
     }

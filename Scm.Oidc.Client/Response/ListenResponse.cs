@@ -8,7 +8,9 @@ namespace Com.Scm.Response
     /// </summary>
     public class ListenResponse : OidcResponse
     {
-        public TicketInfo Ticket { get; set; }
+        public string Salt { get; set; }
+        public ListenHandle Handle { get; set; }
+        public ListenResult Result { get; set; }
 
         public string access_token { get; set; }
         public string refresh_token { get; set; }

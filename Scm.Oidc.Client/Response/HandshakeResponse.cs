@@ -1,4 +1,7 @@
 ﻿using Com.Scm.Oidc;
+using Com.Scm.Utils;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Com.Scm.Response
 {
@@ -13,11 +16,16 @@ namespace Com.Scm.Response
     public class TicketInfo
     {
         public string Code { get; set; }
-        public long Time { get; set; }
         public string Salt { get; set; }
+        public string Nonce { get; set; }
 
-        public ListenHandle Handle { get; set; }
-        public ListenResult Result { get; set; }
+        public string GetDigest()
+        {
+            var alg = SHA256.Create();
+            var input = Nonce + ":" + Salt;
+            byte[] bytes = alg.ComputeHash(Encoding.UTF8.GetBytes(input));
+            return TextUtils.ToHexString(bytes);
+        }
     }
 
     public enum ListenHandle : byte

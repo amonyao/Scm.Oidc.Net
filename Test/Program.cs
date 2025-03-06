@@ -9,32 +9,19 @@ internal class Program
 
     public async Task Test()
     {
-        var _Config = new OidcConfig();
-        // 使用演示应用
-        _Config.UseDemo();
-
-        var _Client = new OidcClient(_Config);
-        var response = await _Client.HandshakeAsync("123");
+        var config = new OidcConfig();
+        config.UseTest();
+        var client = new OidcClient(config);
+        var response = await client.HandshakeAsync("1234");
         var ticket = response.Ticket;
-        Console.WriteLine(ticket.Code);
-        Console.WriteLine(ticket.Salt);
-
-        var max = 60;
-        while (max > 0)
+        var qty = 30;
+        while (qty > 0)
         {
-            var responses = await _Client.ListenAsync(ticket);
-            if (!responses.IsSuccess())
-            {
-                Console.WriteLine(responses.GetMessage());
-            }
-            else
-            {
-                Console.WriteLine(responses.Ticket.Handle);
-            }
-            //ticket.Salt = responses.Salt;
             Thread.Sleep(1000);
-
-            max--;
+            var kk = await client.ListenAsync(ticket);
+            ticket.Salt = kk.Salt;
+            Console.WriteLine(kk.Salt);
+            qty -= 1;
         }
     }
 }

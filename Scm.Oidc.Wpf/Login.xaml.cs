@@ -26,8 +26,8 @@ namespace Com.Scm
             TbYear.Text = DateTime.Now.Year.ToString();
 
             _Config = new OidcConfig();
-            // 使用演示应用
-            _Config.UseDemo();
+            // 使用测试应用
+            _Config.UseTest();
             // 此处也可以修改为您自己的应用
             //_Config.AppKey = "YOUR_APP_KEY";
             //_Config.AppSecret = "YOUR_APP_SECRET";
